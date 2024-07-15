@@ -1,0 +1,14 @@
+body {
+  background-color: #22362a;
+  color: white;
+}
+.wellbeing {
+  text-align: center;
+  width: 2em;
+}
+.wellbeing--positive {
+  background-color: green;
+}
+.wellbeing--negative {
+  background-color: red;
+}
