@@ -1,32 +1,26 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Timberborn.Characters;
-using Timberborn.EntitySystem;
-using Timberborn.EntityPanelSystem;
+using Newtonsoft.Json;
+using UnityEngine;
 using Timberborn.Modding;
 using Timberborn.SingletonSystem;
-using Timberborn.Wellbeing;
-using UnityEngine;
 
 namespace Mods.WebUI.Scripts {
   internal class WebUIServer : ILoadableSingleton, IUnloadableSingleton {
 
-    private readonly EntityRegistry _entityRegistry;
-    private readonly EntityBadgeService _entityBadgeService;
-    private readonly HttpListener _listener;
     private readonly MainThread _mainThread;
+    private readonly CharacterInformation _characterInformation;
     private readonly string _rootPath;
+    private readonly HttpListener _listener;
 
-    public WebUIServer(EntityRegistry entityRegistry, EntityBadgeService entityBadgeService, ModRepository modRepository, MainThread mainThread) {
+    public WebUIServer(CharacterInformation characterInformation, ModRepository modRepository, MainThread mainThread) {
       Debug.Log("WebUIServer()");
-      _entityRegistry = entityRegistry;
-      _entityBadgeService = entityBadgeService;
       _mainThread = mainThread;
+      _characterInformation = characterInformation;
 
       _rootPath = modRepository.Mods
         .First((m) => m.Manifest.Name == "Web UI")
@@ -77,29 +71,6 @@ namespace Mods.WebUI.Scripts {
       output.Close();
     }
 
-    private string ProcessCharacters(HttpListenerRequest request, HttpListenerResponse response) {
-      response.ContentType = "application/json";
-      // CharacterBatchControlRowFactory has:
-      // ✔ CharacterBatchControlRowItemFactory for EntityAvatar from EntityBadgeService
-      // * BeaverBuildingsBatchControlRowItemFactory for Home and Workplace from BeaverBuildingsBatchControlRowItem
-      // * DeteriorableBatchControlRowItemFactory for Bot.Durability
-      // * AdulthoodBatchControlRowItemFactory for Beaver.Adulthood
-      // * WellbeingBatchControlRowItemFactory for ✔Wellbeing *Bonuses
-      // * StatusBatchControlRowItemFactory for Active Statuses
-      return JsonConvert.SerializeObject(_entityRegistry.Entities
-          .Select((EntityComponent entity) => entity.GetComponentFast<Character>())
-          .Where((c) => c)
-          .Select((c) => new Dictionary<string, object>() {
-            {"Name", c.FirstName },
-            {"Age", c.Age },
-            {"Avatar", _entityBadgeService.GetEntityAvatar(c).name },
-            {"Wellbeing", c.GetComponentFast<WellbeingTracker>().Wellbeing},
-          })
-          .OrderBy((c) => c["Avatar"])  // TODO: Improve sort key
-          .ThenBy((c) => c["Name"])
-        );
-    }
-
     private static readonly Dictionary<string, string> mimeTypes = new Dictionary<string, string>() {
       {".html", "text/html"},
       {".js", "text/javascript"},
@@ -113,6 +84,26 @@ namespace Mods.WebUI.Scripts {
       return File.ReadAllBytes(Path.Combine(_rootPath, fileName));
     }
 
+    private byte[] ReturnJson(Func<object> func, HttpListenerResponse response)
+    {
+      return _mainThread.Invoke(() => {
+        try
+        {
+          var responseString = JsonConvert.SerializeObject(func());
+          response.ContentType = "application/json";
+          byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+          return buffer;
+        }
+        catch (Exception e)
+        {
+          response.StatusCode = 500;
+          response.ContentType = "text/plain; charset=utf-8";
+          byte[] buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
+          return buffer;
+        }
+      }).Result;
+    }
+
     private byte[] ProcessRequest(HttpListenerRequest request, HttpListenerResponse response) {
       if (request.Url.AbsolutePath.ToLower().StartsWith("/assets/", StringComparison.Ordinal))
       {
@@ -120,19 +111,7 @@ namespace Mods.WebUI.Scripts {
       }
       switch (request.Url.AbsolutePath.ToLower()) {
         case "/characters":
-          return _mainThread.Invoke(() => {
-            try {
-              var responseString = ProcessCharacters(request, response);
-              byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-              return buffer;
-            }
-            catch (Exception e) {
-              response.StatusCode = 500;
-              response.ContentType = "text/plain; charset=utf-8";
-              byte[] buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
-              return buffer;
-            }
-          }).Result;
+          return ReturnJson(_characterInformation.GetJson, response);
         case "/":
           return ReturnFile("Assets/index.html", response);
         case "/favicon.ico":

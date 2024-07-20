@@ -7,6 +7,7 @@ namespace Mods.WebUI.Scripts {
     public void Configure(IContainerDefinition containerDefinition) {
       containerDefinition.Bind<MainThread>().AsSingleton();
       containerDefinition.Bind<WebUIServer>().AsSingleton();
+      containerDefinition.Bind<CharacterInformation>().AsSingleton();
     }
 
   }

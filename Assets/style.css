@@ -2,9 +2,9 @@ body {
   background-color: #22362a;
   color: white;
 }
-.wellbeing {
+.age, .wellbeing {
   text-align: center;
-  width: 2em;
+  padding: 0 0.5em;
 }
 .wellbeing--positive {
   background-color: green;

@@ -2,7 +2,7 @@
 
   async function updateCharacters() {
     let characters = await (await fetch('/characters')).json();
-    let trs = characters.map((c) => {
+    let trs = characters.map(g => g.Rows).flat().map(c => {
       let tr = document.createElement('tr');
       let tdA = document.createElement('td');
       let imgA = document.createElement('img');
@@ -14,6 +14,10 @@
       let tdN = document.createElement('td');
       tdN.appendChild(document.createTextNode(c.Name));
       tr.appendChild(tdN);
+      let tdAge = document.createElement('td');
+      tdAge.classList.add("age");
+      tdAge.appendChild(document.createTextNode(c.Age));
+      tr.appendChild(tdAge);
       let tdW = document.createElement('td');
       tdW.appendChild(document.createTextNode(c.Wellbeing));
       tdW.classList.add("wellbeing");
