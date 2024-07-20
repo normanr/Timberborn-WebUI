@@ -65,7 +65,7 @@ namespace Mods.WebUI.Scripts {
 
       // Get a response stream and write the response to it.
       response.ContentLength64 = buffer.Length;
-      System.IO.Stream output = response.OutputStream;
+      var output = response.OutputStream;
       output.Write(buffer, 0, buffer.Length);
       // You must close the output stream.
       output.Close();
@@ -91,15 +91,13 @@ namespace Mods.WebUI.Scripts {
         {
           var responseString = JsonConvert.SerializeObject(func());
           response.ContentType = "application/json";
-          byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-          return buffer;
+          return System.Text.Encoding.UTF8.GetBytes(responseString);
         }
         catch (Exception e)
         {
           response.StatusCode = 500;
           response.ContentType = "text/plain; charset=utf-8";
-          byte[] buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
-          return buffer;
+          return System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
         }
       }).Result;
     }

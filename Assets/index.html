@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html>
-<script src="assets/script.js" defer=true></script>
-<link href="assets/style.css" rel="stylesheet" />
-<body>
-Population
-<table>
-  <tbody id=characters></tbody>
-</table>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <title>Timberborn</title>
+    <link href="assets/style.css" rel="stylesheet" />
+    <script src="assets/knockout-3.5.1.js" defer=true></script>
+    <script src="assets/script.js" defer=true></script>
+  </head>
+  <body class="loading" data-bind="css: { loading: false }">
+    <h3>Population</h3>
+    <table>
+      <!-- ko foreach: characters -->
+      <tbody>
+        <tr>
+          <th colspan=4 data-bind="text: Header + ' (' + Rows.length + ')'"></th>
+        </tr>
+        <!-- ko foreach: Rows -->
+        <tr class="row">
+          <td><img width=24 height=24 data-bind="attr: { src: '/assets/avatars/' + Avatar + '.png' }"></td>
+          <td data-bind="text: Name"></td>
+          <td class=age data-bind="text: Age"><div></div></td>
+          <td><div class=wellbeing data-bind="text: Wellbeing, class: Wellbeing &lt; 0 ? 'wellbeing--negative' : 'wellbeing--positive'"></div></td>
+        </tr>
+        <!-- /ko -->
+      </tbody>
+      <!-- /ko -->
+    </table>
+  </body>
 </html>

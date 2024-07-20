@@ -1,14 +1,39 @@
 body {
   background-color: #22362a;
   color: white;
+  font-family: sans-serif;
+  font-size: 75%;
 }
-.age, .wellbeing {
+.loading {
+  visibility: hidden;
+}
+table {
+  border-spacing: 2px 4px;
+}
+th {
   text-align: center;
-  padding: 0 0.5em;
+}
+tr.row {
+  outline: #af9866 1px solid;
+}
+td {
+  padding: 2px;
+}
+img {
+  vertical-align: bottom;
+}
+.age {
+  text-align: right;
+}
+.wellbeing {
+  text-align: center;
+  padding: 2px 4px;
+  border: #af9866 1px solid;
+  border-radius: 2px;
 }
 .wellbeing--positive {
-  background-color: green;
+  background-color: #008000;
 }
 .wellbeing--negative {
-  background-color: red;
+  background-color: #7e100e;
 }
