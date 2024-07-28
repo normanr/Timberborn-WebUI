@@ -53,6 +53,10 @@
       <HintPath>Timberborn\Timberborn_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>Timberborn\Timberborn_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Timberborn.BaseComponentSystem">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.BaseComponentSystem.dll</HintPath>
       <Private>false</Private>
@@ -71,6 +75,10 @@
     </Reference>
     <Reference Include="Timberborn.Common">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Common.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Timberborn.CoreUI">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.CoreUI.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Timberborn.EntityPanelSystem">
@@ -93,12 +101,28 @@
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.ModManagerScene.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Timberborn.SettingsSystem">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.SettingsSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Timberborn.SingletonSystem">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.SingletonSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Timberborn.Wellbeing">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Wellbeing.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ModSettings.CommonUI">
+      <HintPath>ModSettings\Scripts\ModSettings.CommonUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ModSettings.Core">
+      <HintPath>ModSettings\Scripts\ModSettings.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ModSettings.CoreUI">
+      <HintPath>ModSettings\Scripts\ModSettings.CoreUI.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
@@ -108,6 +132,9 @@
     <Compile Include="Scripts\MainThread.cs" />
     <Compile Include="Scripts\WebUIConfigurator.cs" />
     <Compile Include="Scripts\WebUIServer.cs" />
+    <Compile Include="Scripts\WebUISettings.cs" />
+    <Compile Include="Scripts\ReadOnlyStringModSettingElementFactory.cs" />
+    <Compile Include="Scripts\ReadOnlyModSetting.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\" />
@@ -162,6 +189,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\index-menu.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Localizations\enUS.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

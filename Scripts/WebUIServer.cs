@@ -12,40 +12,70 @@ using Timberborn.SingletonSystem;
 namespace Mods.WebUI.Scripts {
   internal class WebUIServer : ILoadableSingleton, IUnloadableSingleton {
 
+    private readonly ModRepository _modRepository;
     private readonly MainThread _mainThread;
-    private readonly CharacterInformation _characterInformation;
-    private readonly string _rootPath;
-    private readonly HttpListener _listener;
+    private readonly WebUISettings _webUISettings;
 
-    public WebUIServer(CharacterInformation characterInformation, ModRepository modRepository, MainThread mainThread) {
+    private string _rootPath;
+    private HttpListener _listener;
+
+    public WebUIServer(ModRepository modRepository, MainThread mainThread, WebUISettings webUISettings) {
       Debug.Log("WebUIServer()");
+      _modRepository = modRepository;
       _mainThread = mainThread;
-      _characterInformation = characterInformation;
-
-      _rootPath = modRepository.Mods
-        .First((m) => m.Manifest.Name == "Web UI")
-        .ModDirectory.Path;
-      Debug.Log("rootPath = " + _rootPath);
-
-      _listener = new HttpListener();
-      _listener.Prefixes.Add("http://*:8080/");
-      _listener.Start();
-      Task.Run(() => { RunServer(_listener); });
+      _webUISettings = webUISettings;
     }
 
     public void Load() {
       Debug.Log("WebUIServer.Load()");
+      _rootPath = _modRepository.Mods
+        .First((m) => m.Manifest.Name == "Web UI")
+        .ModDirectory.Path;
+      Debug.Log("WebUIServer.rootPath = " + _rootPath);
+
+      _webUISettings.Port.ValueChanged += (sender, e) => {
+        Debug.Log("WebUIServer._webUISettings.Port.ValueChanged");
+        StopServer();
+        StartServer();
+      };
+      StartServer();
     }
 
     public void Unload() {
       Debug.Log("WebUIServer.Unload()");
-      _listener.Stop();
+      StopServer();
     }
 
-    private void RunServer(HttpListener listener) {
-      while (true) {
-        HttpListenerContext context = listener.GetContext();
-        Task.Run(() => HandleRequest(context));
+    private void StartServer() {
+      try {
+        var listener = new HttpListener();
+        listener.Prefixes.Add("http://*:" + _webUISettings.Port.Value + "/");
+        listener.Start();
+        _webUISettings.Status.SetValue("Listening on port " + _webUISettings.Port.Value);
+        _listener = listener;
+        Task.Run(() => {
+          while (true) {
+            HttpListenerContext context = _listener.GetContext();
+            Task.Run(() => HandleRequest(context));
+          }
+        });
+      } catch (Exception ex) {
+        _webUISettings.Status.SetValue("Failed: " + ex.Message);
+        Debug.LogError("WebUIServer.StartServer(): " + ex);
+      }
+    }
+
+    private void StopServer() {
+      try {
+        var listener = _listener;
+        _listener = null;
+        if (listener == null) {
+          return;
+        }
+        listener.Stop();
+        _webUISettings.Status.SetValue("Stopped");
+      } catch (Exception e) {
+        Debug.LogError("WebUIServer.StopServer(): " + e);
       }
     }
 
@@ -56,8 +86,7 @@ namespace Mods.WebUI.Scripts {
       byte[] buffer;
       try {
         buffer = ProcessRequest(request, response);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         response.StatusCode = 500;
         response.ContentType = "text/plain; charset=utf-8";
         buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
@@ -72,6 +101,7 @@ namespace Mods.WebUI.Scripts {
     }
 
     private static readonly Dictionary<string, string> mimeTypes = new Dictionary<string, string>() {
+      {".log", "text/plain"},
       {".html", "text/html"},
       {".js", "text/javascript"},
       {".css", "text/css"},
@@ -79,22 +109,25 @@ namespace Mods.WebUI.Scripts {
       {".png", "image/png"},
     };
 
-    private byte[] ReturnFile(string fileName, HttpListenerResponse response) {
+    protected byte[] ReturnFile(string fileName, HttpListenerResponse response) {
       response.ContentType = mimeTypes[Path.GetExtension(fileName)];
-      return File.ReadAllBytes(Path.Combine(_rootPath, fileName));
+      // File.ReadAllBytes opens the file with FileShare.Read, so it can't open
+      // files already open for writing (like Unity's Player.log).
+      using (var fs = new FileStream(Path.Combine(_rootPath, fileName),
+        FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+        using (var rdr = new BinaryReader(fs)) {
+          return rdr.ReadBytes((int)fs.Length);
+        }
+      }
     }
 
-    private byte[] ReturnJson(Func<object> func, HttpListenerResponse response)
-    {
+    protected byte[] ReturnJson(Func<object> func, HttpListenerResponse response) {
       return _mainThread.Invoke(() => {
-        try
-        {
+        try {
           var responseString = JsonConvert.SerializeObject(func());
           response.ContentType = "application/json";
           return System.Text.Encoding.UTF8.GetBytes(responseString);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
           response.StatusCode = 500;
           response.ContentType = "text/plain; charset=utf-8";
           return System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
@@ -102,22 +135,48 @@ namespace Mods.WebUI.Scripts {
       }).Result;
     }
 
-    private byte[] ProcessRequest(HttpListenerRequest request, HttpListenerResponse response) {
-      if (request.Url.AbsolutePath.ToLower().StartsWith("/assets/", StringComparison.Ordinal))
-      {
+    protected virtual byte[] ProcessRequest(HttpListenerRequest request, HttpListenerResponse response) {
+      if (request.Url.AbsolutePath.ToLower().StartsWith("/assets/", StringComparison.Ordinal)) {
         return ReturnFile(request.Url.AbsolutePath.Substring(1), response);
       }
       switch (request.Url.AbsolutePath.ToLower()) {
-        case "/characters":
-          return ReturnJson(_characterInformation.GetJson, response);
         case "/":
-          return ReturnFile("Assets/index.html", response);
+          return ReturnFile("Assets/index-menu.html", response);
         case "/favicon.ico":
           return ReturnFile("Assets/favicon.ico", response);
+        case "/player.log":
+          if (_webUISettings.AllowPlayerLog.Value) {
+            return ReturnFile(Application.persistentDataPath + "/Player.log", response);
+          }
+          Debug.Log("403 Forbidden: " + request.Url);
+          response.StatusCode = 403;
+          return System.Text.Encoding.UTF8.GetBytes("Forbidden\n");
         default:
           Debug.Log("404 Not Found: " + request.Url);
           response.StatusCode = 404;
           return System.Text.Encoding.UTF8.GetBytes("Not Found\n");
+      }
+    }
+  }
+
+  internal class WebUIInGameServer : WebUIServer {
+
+    private readonly CharacterInformation _characterInformation;
+
+    public WebUIInGameServer(ModRepository modRepository, MainThread mainThread, WebUISettings webUISettings, CharacterInformation characterInformation)
+      : base(modRepository, mainThread, webUISettings) {
+      Debug.Log("WebUIInGameServer()");
+      _characterInformation = characterInformation;
+    }
+
+    protected override byte[] ProcessRequest(HttpListenerRequest request, HttpListenerResponse response) {
+      switch (request.Url.AbsolutePath.ToLower()) {
+        case "/":
+          return ReturnFile("Assets/index.html", response);
+        case "/characters":
+          return ReturnJson(_characterInformation.GetJson, response);
+        default:
+          return base.ProcessRequest(request, response);
       }
     }
   }

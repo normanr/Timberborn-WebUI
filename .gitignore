@@ -1,5 +1,6 @@
 bin/
 obj/
 Timberborn
+ModSettings
 *.csproj.user
 .vs/*/xs/UserPrefs.xml
