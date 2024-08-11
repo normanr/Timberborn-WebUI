@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Linq;
+using System.Web.Routing;
+using Newtonsoft.Json;
 using Timberborn.BeaverContaminationSystem;
 using Timberborn.Characters;
 using Timberborn.Localization;
 using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
+using UnityEngine;
 
 namespace Mods.WebUI.Scripts
 {
@@ -20,11 +23,29 @@ namespace Mods.WebUI.Scripts
     private readonly EntityBadgeService _entityBadgeService;
     private readonly ILoc _loc;
 
-    public CharacterInformation(EntityRegistry entityRegistry, EntityBadgeService entityBadgeService, ILoc loc)
+    public CharacterInformation(WebUIServer webUIServer, EntityRegistry entityRegistry, EntityBadgeService entityBadgeService, ILoc loc)
     {
       _entityRegistry = entityRegistry;
       _entityBadgeService = entityBadgeService;
       _loc = loc;
+
+      webUIServer.MapGet("/characters", HandleRequest);
+    }
+
+    [OnMainThread]
+    string HandleRequest(RequestContext requestContext) {
+      var httpContext = requestContext.HttpContext;
+      var response = httpContext.Response;
+      try {
+        var responseString = JsonConvert.SerializeObject(GetJson());
+        response.ContentType = "application/json";
+        return responseString;
+      } catch (Exception e) {
+        Debug.LogError("Error: " + e);
+        response.StatusCode = 500;
+        response.ContentType = "text/plain; charset=utf-8";
+        return "Error: " + e + "\n";
+      }
     }
 
     private static string GetGroupingKey(EntityComponent entityComponent)

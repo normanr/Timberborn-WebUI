@@ -2,29 +2,34 @@ using Bindito.Core;
 using ModSettings.CoreUI;
 
 namespace Mods.WebUI.Scripts {
-  [Context("Game")]
-  internal class WebUIConfiguratorForGame : IConfigurator {
-
-    public void Configure(IContainerDefinition containerDefinition) {
+  internal class WebUIConfiguratorBase : IConfigurator {
+    public virtual void Configure(IContainerDefinition containerDefinition) {
       containerDefinition.Bind<MainThread>().AsSingleton();
       containerDefinition.Bind<WebUISettings>().AsSingleton();
-      containerDefinition.Bind<WebUIInGameServer>().AsSingleton();
+      containerDefinition.Bind<WebUIServer>().AsSingleton();
+      containerDefinition.Bind<StaticAssetsHandler>().AsSingleton();
+      containerDefinition.Bind<PlayerLogHandler>().AsSingleton();
+    }
+  }
+
+  [Context("Game")]
+  internal class WebUIConfiguratorForGame : WebUIConfiguratorBase {
+    public override void Configure(IContainerDefinition containerDefinition) {
+      base.Configure(containerDefinition);
+      containerDefinition.Bind<IndexGameHandler>().AsSingleton();
       containerDefinition.Bind<CharacterInformation>().AsSingleton();
     }
-
   }
 
   [Context("MainMenu")]
-  internal class WebUIConfiguratorForMainMenu : IConfigurator {
+  internal class WebUIConfiguratorForMainMenu : WebUIConfiguratorBase {
 
-    public void Configure(IContainerDefinition containerDefinition) {
-      containerDefinition.Bind<MainThread>().AsSingleton();
-      containerDefinition.Bind<WebUISettings>().AsSingleton();
+    public override void Configure(IContainerDefinition containerDefinition) {
+      base.Configure(containerDefinition);
       containerDefinition.MultiBind<IModSettingElementFactory>()
           .To<ReadOnlyStringModSettingElementFactory>()
           .AsSingleton();
-      containerDefinition.Bind<WebUIServer>().AsSingleton();
+      containerDefinition.Bind<IndexMenuHandler>().AsSingleton();
     }
-
   }
 }
