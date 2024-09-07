@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Web.Routing;
 using Newtonsoft.Json;
-using Timberborn.BeaverContaminationSystem;
 using Timberborn.Characters;
 using Timberborn.Localization;
 using Timberborn.EntityPanelSystem;
@@ -14,11 +13,6 @@ namespace Mods.WebUI.Scripts
 {
   internal class CharacterInformation
   {
-    private static readonly string AdultLocKey = "Beaver.Adult.PrefabName";
-    private static readonly string ChildLocKey = "Beaver.Child.PrefabName";
-    private static readonly string ContaminatedLocKey = "Beaver.Population.Contaminated";
-    private static readonly string BotLocKey = "Bot.PrefabName";
-
     private readonly EntityRegistry _entityRegistry;
     private readonly EntityBadgeService _entityBadgeService;
     private readonly ILoc _loc;
@@ -48,37 +42,6 @@ namespace Mods.WebUI.Scripts
       }
     }
 
-    private static string GetGroupingKey(EntityComponent entityComponent)
-    {
-      Contaminable componentFast = entityComponent.GetComponentFast<Contaminable>();
-      if (componentFast != null && componentFast.IsContaminated)
-      {
-        return ContaminatedLocKey;
-      }
-      return entityComponent.GetComponentFast<SimpleLabeledPrefab>().PrefabNameLocKey;
-    }
-
-    private static string GetSortingKey(string locKey)
-    {
-      if (locKey == AdultLocKey)
-      {
-        return "1";
-      }
-      if (locKey == ChildLocKey)
-      {
-        return "2";
-      }
-      if (locKey == ContaminatedLocKey)
-      {
-        return "3";
-      }
-      if (locKey == BotLocKey)
-      {
-        return "4";
-      }
-      throw new ArgumentOutOfRangeException(nameof(locKey), locKey, null);
-    }
-
     public object GetJson()
     {
       // CharacterBatchControlRowFactory has:
@@ -97,7 +60,7 @@ namespace Mods.WebUI.Scripts
         .Select(o => new {
           o.EntityComponent,
           o.Character,
-          Group = GetGroupingKey(o.EntityComponent),
+          Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
         })
         .GroupBy(o => o.Group, o => new {
           Avatar = _entityBadgeService.GetEntityAvatar(o.Character).name,
@@ -105,7 +68,7 @@ namespace Mods.WebUI.Scripts
           o.Character.Age,
           o.Character.GetComponentFast<WellbeingTracker>().Wellbeing,
         })
-        .OrderBy(o => GetSortingKey(o.Key))
+        .OrderBy(o => CharacterBatchControlTab.GetSortingKey(o.Key))
         .Select(g => new {
           Header = _loc.T(g.Key),
           Rows = g.OrderBy(o => o.Name),

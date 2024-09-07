@@ -11,7 +11,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
@@ -75,6 +75,10 @@
     </Reference>
     <Reference Include="Timberborn.Characters">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Characters.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Timberborn.CharactersBatchControl">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.CharactersBatchControl.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Timberborn.Common">
@@ -149,6 +153,7 @@
     <Compile Include="Scripts\WebUIServer.cs" />
     <Compile Include="Scripts\WebUISettings.cs" />
     <Compile Include="Scripts\WebUIWorkerRequest.cs" />
+    <Compile Include="Scripts\CharacterBatchControlTab.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\" />
