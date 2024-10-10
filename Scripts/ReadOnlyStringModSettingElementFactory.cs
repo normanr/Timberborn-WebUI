@@ -39,10 +39,9 @@ namespace Mods.WebUI.Scripts {
         stringModSetting.ValueChanged += (sender, e) => {
           textField.value = stringModSetting.Value;
         };
-        textField.isReadOnly = true;
         // Added-End
 
-        element = new TextInputBaseFieldModSettingElement<string>(root, textField);
+        element = new TextInputBaseFieldModSettingElement<string>(root, modSetting, textField);
         return true;
       }
       element = null;

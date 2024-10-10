@@ -1,13 +1,13 @@
 {
   "Name": "Web UI",
-  "Version": "0.0.6",
+  "Version": "0.0.7",
   "Id": "WebUI",
-  "MinimumGameVersion": "0.6.1.0",
+  "MinimumGameVersion": "0.6.8.4",
   "Description": "Web UI",
   "RequiredMods": [
     {
       "Id": "eMka.ModSettings",
-      "MinimumVersion": "0.6.3.3"
+      "MinimumVersion": "0.6.7.0"
     }
   ]
 }
