@@ -17,6 +17,11 @@ tr.row {
   outline: #af9866 1px solid;
 }
 td {
+  padding: 1px 5px;
+  background-color: #22362a;
+  outline: 2.5px solid #152722;
+}
+td:has(> img) {
   padding: 1px;
 }
 img {

@@ -93,6 +93,10 @@
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.BotsUI.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Timberborn.Buildings">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Buildings.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Timberborn.Characters">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Characters.dll</HintPath>
       <Private>false</Private>

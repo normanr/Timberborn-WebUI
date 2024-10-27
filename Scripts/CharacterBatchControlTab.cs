@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 
-using Timberborn.CharactersBatchControl;
 using Timberborn.EntitySystem;
 
 namespace Mods.WebUI.Scripts {
