@@ -7,11 +7,13 @@ using UnityEngine;
 using Timberborn.BeaversUI;
 using Timberborn.BotsUI;
 using Timberborn.Characters;
+using Timberborn.DwellingSystem;
 using Timberborn.GameFactionSystem;
 using Timberborn.Localization;
 using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
+using Timberborn.WorkSystem;
 
 namespace Mods.WebUI.Scripts
 {
@@ -79,7 +81,7 @@ namespace Mods.WebUI.Scripts
       }
       // CharacterBatchControlRowFactory has:
       // ✔ CharacterBatchControlRowItemFactory for EntityAvatar from EntityBadgeService
-      // * BeaverBuildingsBatchControlRowItemFactory for Home and Workplace from BeaverBuildingsBatchControlRowItem
+      // ½ BeaverBuildingsBatchControlRowItemFactory for Home and Workplace from BeaverBuildingsBatchControlRowItem
       // * DeteriorableBatchControlRowItemFactory for Bot.Durability
       // * AdulthoodBatchControlRowItemFactory for Beaver.Adulthood
       // * WellbeingBatchControlRowItemFactory for ✔Wellbeing *Bonuses
@@ -94,12 +96,18 @@ namespace Mods.WebUI.Scripts
           o.EntityComponent,
           o.Character,
           Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
+          Dweller = o.EntityComponent.GetComponentFast<Dweller>(),
+          Worker = o.EntityComponent.GetComponentFast<Worker>(),
         })
         .GroupBy(o => o.Group, o => new {
           Avatar = Url(GetEntityAvatarPath(o.Character)),
           Name = o.Character.FirstName,
           o.Character.Age,
           o.Character.GetComponentFast<WellbeingTracker>().Wellbeing,
+          HomeIcon = Url(o.Dweller != null && o.Dweller.HasHome ? o.Dweller.Home.GetComponentFast<LabeledEntity>().GetLabeledEntitySpec().ImagePath : null),
+          // TODO: Home { Icon, Tooltip }
+          WorkplaceIcon = Url(o.Worker != null && o.Worker.Employed ? o.Worker.Workplace.GetComponentFast<LabeledEntity>().GetLabeledEntitySpec().ImagePath : null),
+          // TODO: Workplace { Icon, Tooltip }
         })
         .OrderBy(o => CharacterBatchControlTab.GetSortingKey(o.Key))
         .Select(g => new {

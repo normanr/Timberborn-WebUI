@@ -17,9 +17,11 @@
         </tr>
         <!-- ko foreach: Rows -->
         <tr class="row">
-          <td><img width=24 height=24 data-bind="attr: { src: Avatar }"></td>
+          <td><img width=26 height=26 data-bind="attr: { src: Avatar }"></td>
           <td data-bind="text: Name"></td>
           <td class=age data-bind="text: Age"><div></div></td>
+          <td><img width=26 height=26 data-bind="attr: { src: HomeIcon }, visible: HomeIcon"></td>
+          <td><img width=26 height=26 data-bind="attr: { src: WorkplaceIcon }, visible: WorkplaceIcon"></td>
           <td><div class=wellbeing data-bind="text: Wellbeing, class: Wellbeing &lt; 0 ? 'wellbeing--negative' : 'wellbeing--positive'"></div></td>
         </tr>
         <!-- /ko -->
