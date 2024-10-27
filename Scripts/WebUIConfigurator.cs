@@ -7,6 +7,7 @@ namespace Mods.WebUI.Scripts {
       containerDefinition.Bind<MainThread>().AsSingleton();
       containerDefinition.Bind<WebUISettings>().AsSingleton();
       containerDefinition.Bind<WebUIServer>().AsSingleton();
+      containerDefinition.Bind<TextureHandler>().AsSingleton();
       containerDefinition.Bind<StaticAssetsHandler>().AsSingleton();
       containerDefinition.Bind<PlayerLogHandler>().AsSingleton();
     }

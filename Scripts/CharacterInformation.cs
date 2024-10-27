@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Routing;
 using Newtonsoft.Json;
+using UnityEngine;
+using Timberborn.BeaversUI;
+using Timberborn.BotsUI;
 using Timberborn.Characters;
+using Timberborn.GameFactionSystem;
 using Timberborn.Localization;
 using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
-using UnityEngine;
 
 namespace Mods.WebUI.Scripts
 {
@@ -15,13 +19,22 @@ namespace Mods.WebUI.Scripts
   {
     private readonly EntityRegistry _entityRegistry;
     private readonly EntityBadgeService _entityBadgeService;
+    private readonly FactionService _factionService;
     private readonly ILoc _loc;
+    private readonly TextureHandler _textureHandler;
 
-    public CharacterInformation(WebUIServer webUIServer, EntityRegistry entityRegistry, EntityBadgeService entityBadgeService, ILoc loc)
+    public CharacterInformation(WebUIServer webUIServer,
+                                EntityRegistry entityRegistry,
+                                EntityBadgeService entityBadgeService,
+                                FactionService factionService,
+                                ILoc loc,
+                                TextureHandler textureHandler)
     {
       _entityRegistry = entityRegistry;
       _entityBadgeService = entityBadgeService;
+      _factionService = factionService;
       _loc = loc;
+      _textureHandler = textureHandler;
 
       webUIServer.MapGet("/characters", HandleRequest);
     }
@@ -42,8 +55,28 @@ namespace Mods.WebUI.Scripts
       }
     }
 
+    string GetEntityAvatarPath(Character subject) {
+      var _entityBadgesCache = new List<IEntityBadge>();
+      subject.GetComponentsFast(_entityBadgesCache);
+      foreach (var entityBadge in _entityBadgesCache) {
+        if (entityBadge is BeaverEntityBadge) {
+          return (entityBadge as BeaverEntityBadge).GetEntityAvatarPath();
+        }
+        if (entityBadge is BotEntityBadge) {
+          return _factionService.Current.BotAvatar;
+        }
+      }
+      return null;
+    }
+
     public object GetJson()
     {
+      string Url(string path) {
+        if (path == null) {
+          return null;
+        }
+        return _textureHandler.SignUrl($"/{path}.png?w=96");
+      }
       // CharacterBatchControlRowFactory has:
       // ✔ CharacterBatchControlRowItemFactory for EntityAvatar from EntityBadgeService
       // * BeaverBuildingsBatchControlRowItemFactory for Home and Workplace from BeaverBuildingsBatchControlRowItem
@@ -63,7 +96,7 @@ namespace Mods.WebUI.Scripts
           Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
         })
         .GroupBy(o => o.Group, o => new {
-          Avatar = _entityBadgeService.GetEntityAvatar(o.Character).name,
+          Avatar = Url(GetEntityAvatarPath(o.Character)),
           Name = o.Character.FirstName,
           o.Character.Age,
           o.Character.GetComponentFast<WellbeingTracker>().Wellbeing,

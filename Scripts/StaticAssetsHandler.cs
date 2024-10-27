@@ -15,17 +15,19 @@ namespace Mods.WebUI.Scripts {
     public string HandleRequest(RequestContext requestContext) {
       var virtualPath = "Assets/" + (string)requestContext.RouteData.Values["path_info"];
       var httpContext = requestContext.HttpContext;
-      HttpRequestBase request = httpContext.Request;
+      var request = httpContext.Request;
+      var response = httpContext.Response;
       var filename = request.MapPath(virtualPath);
       if (!File.Exists(filename)) {
-        Debug.Log("404 Not Found: " + httpContext.Request.Url);
-        httpContext.Response.StatusCode = 404;
+        Debug.Log("404 Not Found: " + request.Url);
+        response.StatusCode = 404;
         return null;
       }
       var info = new FileInfo(filename);
-      httpContext.Response.ContentType = MimeMapping.GetMimeMapping(filename);
-      httpContext.Response.AppendHeader("Content-Length", info.Length.ToString());
-      httpContext.Response.TransmitFile(filename, 0, info.Length);
+      response.ContentType = MimeMapping.GetMimeMapping(filename);
+      response.AppendHeader("Cache-Control", "max-age=3600, public");
+      response.AppendHeader("Content-Length", info.Length.ToString());
+      response.TransmitFile(filename, 0, info.Length);
       return null;
     }
   }

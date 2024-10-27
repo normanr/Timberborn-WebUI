@@ -1,9 +1,9 @@
 ﻿using System.Web.Routing;
 
 namespace Mods.WebUI.Scripts {
-  internal class IndexGameHandler : StaticAssetsHandler {
-    public IndexGameHandler(WebUIServer webUIServer) : base(webUIServer) {
-      webUIServer.MapGet("/", HandleRequest, new RouteValueDictionary() {
+  internal class IndexGameHandler {
+    public IndexGameHandler(WebUIServer webUIServer, StaticAssetsHandler staticAssetsHandler) {
+      webUIServer.MapGet("/", staticAssetsHandler.HandleRequest, new RouteValueDictionary() {
         { "path_info", "index.html"},
       });
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace Mods.WebUI.Scripts {
     private readonly WebUISettings _webUISettings;
     private readonly RouteCollection _routes = new RouteCollection();
 
-    private string _rootPath;
+    internal static string RootPath;
     private HttpListener _listener;
 
     internal WebUIServer(ModRepository modRepository, MainThread mainThread, WebUISettings webUISettings) {
@@ -27,13 +26,9 @@ namespace Mods.WebUI.Scripts {
     }
 
     public void Load() {
-      Debug.Log("WebUIServer.Load()");
-      _rootPath = _modRepository.Mods
-        .First((m) => m.Manifest.Name == "Web UI")
-        .ModDirectory.Path;
-      Debug.Log("WebUIServer.rootPath = " + _rootPath);
+      Debug.Log("WebUIServer.Load(), RootPath = " + RootPath);
       AppDomain.CurrentDomain.SetData(".appVPath", "/");
-      AppDomain.CurrentDomain.SetData(".appPath", _rootPath);
+      AppDomain.CurrentDomain.SetData(".appPath", RootPath);
 
       _webUISettings.Port.ValueChanged += (sender, e) => {
         Debug.Log("WebUIServer._webUISettings.Port.ValueChanged");
