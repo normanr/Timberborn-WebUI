@@ -40,7 +40,7 @@ namespace Mods.WebUI.Scripts {
       var response = httpContext.Response;
 
       if (!SignatureIsValid(request.Url)) {
-        Debug.Log("404 Not Found: " + request.Url);
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + request.Url);
         response.StatusCode = 404;
         return null;
       }
@@ -58,7 +58,7 @@ namespace Mods.WebUI.Scripts {
         response.OutputStream.Write(data, 0, data.Length);
         return null;
       } catch (Exception ex) {
-        Debug.Log("500 Server Error: " + request.Url);
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 500 Server Error: " + request.Url);
         Debug.LogError(ex);
         response.StatusCode = 500;
         return null;
@@ -66,7 +66,7 @@ namespace Mods.WebUI.Scripts {
     }
 
     private byte[] GetAssetData(Uri url) {
-      Debug.Log("WebUI: Caching " + url.PathAndQuery);
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Caching " + url.PathAndQuery);
       var ext = Path.GetExtension(url.AbsolutePath);
       var qs = HttpUtility.ParseQueryString(url.Query);
       var texture = _assetLoader.Load<Texture2D>(url.AbsolutePath.TrimStart('/').Replace(ext, ""));

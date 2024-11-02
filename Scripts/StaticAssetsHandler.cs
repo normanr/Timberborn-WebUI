@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Web;
 using System.Web.Routing;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Mods.WebUI.Scripts {
       var response = httpContext.Response;
       var filename = request.MapPath(virtualPath);
       if (!File.Exists(filename)) {
-        Debug.Log("404 Not Found: " + request.Url);
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + request.Url);
         response.StatusCode = 404;
         return null;
       }

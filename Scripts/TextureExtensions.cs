@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Mods.WebUI {
+namespace Mods.WebUI.Scripts {
   public static class TextureExtensions {
     public static Texture2D DuplicateAsReadable(this Texture2D source, int width, int height) {
       if (width == 0) {

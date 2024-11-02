@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Web.Routing;
 using UnityEngine;
 
@@ -14,13 +15,13 @@ namespace Mods.WebUI.Scripts {
     string HandleRequest(RequestContext requestContext) {
       var httpContext = requestContext.HttpContext;
       if (!_webUISettings.AllowPlayerLog.Value) {
-        Debug.Log("404 Not Found: " + httpContext.Request.Url);
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + httpContext.Request.Url);
         httpContext.Response.StatusCode = 404;
         return null;
       }
       var forwardedFor = httpContext.Request.Headers.Get("X-Forwarded-For");
       if (forwardedFor != null) {
-        Debug.Log("403 Forbidden: " + httpContext.Request.Url);
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 403 Forbidden: " + httpContext.Request.Url);
         httpContext.Response.StatusCode = 403;
         return null;
       }

@@ -165,6 +165,10 @@
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.WorkSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Harmony">
+      <HintPath>Harmony/0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="ModSettings.CommonUI">
       <HintPath>ModSettings\Scripts\ModSettings.CommonUI.dll</HintPath>
       <Private>false</Private>
@@ -203,6 +207,7 @@
     <Compile Include="Scripts\WebUISettings.cs" />
     <Compile Include="Scripts\WebUIStarter.cs" />
     <Compile Include="Scripts\WebUIWorkerRequest.cs" />
+    <Compile Include="Scripts\SocketPatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\" />

@@ -54,7 +54,7 @@ namespace Mods.WebUI.Scripts
         response.ContentType = "application/json";
         return responseString;
       } catch (Exception e) {
-        Debug.LogError("Error: " + e);
+        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Error: " + e);
         response.StatusCode = 500;
         response.ContentType = "text/plain; charset=utf-8";
         return "Error: " + e + "\n";

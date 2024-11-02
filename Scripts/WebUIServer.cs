@@ -26,12 +26,12 @@ namespace Mods.WebUI.Scripts {
     }
 
     public void Load() {
-      Debug.Log("WebUIServer.Load(), RootPath = " + RootPath);
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Load(), RootPath = " + RootPath);
       AppDomain.CurrentDomain.SetData(".appVPath", "/");
       AppDomain.CurrentDomain.SetData(".appPath", RootPath);
 
       _webUISettings.Port.ValueChanged += (sender, e) => {
-        Debug.Log("WebUIServer._webUISettings.Port.ValueChanged");
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Port Changed");
         StopServer();
         StartServer();
       };
@@ -39,7 +39,7 @@ namespace Mods.WebUI.Scripts {
     }
 
     public void Unload() {
-      Debug.Log("WebUIServer.Unload()");
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Unload()");
       StopServer();
     }
 
@@ -81,7 +81,7 @@ namespace Mods.WebUI.Scripts {
         });
       } catch (Exception ex) {
         _webUISettings.Status.SetValue("Failed: " + ex.Message);
-        Debug.LogError("WebUIServer.StartServer failed: " + ex);
+        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StartServer failed: " + ex);
       }
     }
 
@@ -95,7 +95,7 @@ namespace Mods.WebUI.Scripts {
         listener.Stop();
         _webUISettings.Status.SetValue("Stopped");
       } catch (Exception e) {
-        Debug.LogError("WebUIServer.StopServer failed: " + e);
+        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StopServer failed: " + e);
       }
     }
 
@@ -107,7 +107,7 @@ namespace Mods.WebUI.Scripts {
           var contextBase = new HttpContextWrapper(httpContext);
           var routeData = _routes.GetRouteData(contextBase);
           if (routeData == null) {
-            Debug.Log("404 Not Found: " + httpContext.Request.Url);
+            Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + httpContext.Request.Url);
             response.StatusCode = 404;
             response.ContentType = "text/plain; charset=utf-8";
             var buffer = System.Text.Encoding.UTF8.GetBytes("Not Found\n");
@@ -121,7 +121,7 @@ namespace Mods.WebUI.Scripts {
             httpContext.Response.Flush();
           }
         } catch (Exception e) {
-          Debug.LogError("Error: " + e);
+          Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Error: " + e);
           response.StatusCode = 500;
           response.ContentType = "text/plain; charset=utf-8";
           var buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
