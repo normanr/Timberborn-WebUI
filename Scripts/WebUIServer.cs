@@ -26,12 +26,12 @@ namespace Mods.WebUI.Scripts {
     }
 
     public void Load() {
-      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Load(), RootPath = " + RootPath);
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Load(), Port = {_webUISettings.Port.Value}, RootPath = {RootPath}");
       AppDomain.CurrentDomain.SetData(".appVPath", "/");
       AppDomain.CurrentDomain.SetData(".appPath", RootPath);
 
       _webUISettings.Port.ValueChanged += (sender, e) => {
-        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Port Changed");
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Port Changed to {_webUISettings.Port.Value}");
         StopServer();
         StartServer();
       };
@@ -100,7 +100,8 @@ namespace Mods.WebUI.Scripts {
     }
 
     private void HandleRequest(HttpListenerContext context) {
-      using (var response = context.Response) {
+      var response = context.Response;
+      try {
         try {
           var wr = new WebUIWorkerRequest(context.Request, response);
           var httpContext = new HttpContext(wr);
@@ -129,6 +130,9 @@ namespace Mods.WebUI.Scripts {
           // Get a response stream and write the response to it.
           response.OutputStream.Write(buffer, 0, buffer.Length);
         }
+      }
+      finally {
+        response.Close();
       }
     }
   }

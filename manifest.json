@@ -1,6 +1,6 @@
 {
   "Name": "Web UI",
-  "Version": "0.0.9",
+  "Version": "0.1.0",
   "Id": "WebUI",
   "MinimumGameVersion": "0.6.8.4",
   "Description": "Web UI",

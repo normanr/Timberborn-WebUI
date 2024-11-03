@@ -19,8 +19,9 @@ namespace Mods.WebUI.Scripts {
       if (!string.IsNullOrEmpty(text)) {
         var buffer = Encoding.UTF8.GetBytes(text);
         // Get a response stream and write the response to it.
-        context.Response.AddHeader("Content-Length", buffer.Length.ToString());
-        context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+        var response = context.Response;
+        response.AddHeader("Content-Length", buffer.Length.ToString());
+        response.OutputStream.Write(buffer, 0, buffer.Length);
       }
     }
   }
