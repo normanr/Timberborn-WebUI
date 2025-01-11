@@ -1,5 +1,4 @@
 ﻿using Timberborn.CoreUI;
-using Timberborn.Localization;
 using ModSettings.Core;
 using ModSettings.CoreUI;
 using ModSettings.CommonUI;
@@ -10,27 +9,21 @@ namespace Mods.WebUI.Scripts {
   internal class ReadOnlyStringModSettingElementFactory : IModSettingElementFactory {
 
     private readonly VisualElementLoader _visualElementLoader;
-    private readonly ILoc _loc;
+    private readonly ModSettingDescriptorInitializer _modSettingDescriptorInitializer;
 
     public ReadOnlyStringModSettingElementFactory(VisualElementLoader visualElementLoader,
-                                                  ILoc loc) {
+                                                  ModSettingDescriptorInitializer modSettingDescriptorInitializer) {
       _visualElementLoader = visualElementLoader;
-      _loc = loc;
+      _modSettingDescriptorInitializer = modSettingDescriptorInitializer;
     }
 
-    public int Priority => 1;
+    public int Priority => 0;
 
     public bool TryCreateElement(ModSetting modSetting, out IModSettingElement element) {
       if (modSetting is ReadOnlyModSetting<string> stringModSetting) {
         var root = _visualElementLoader.LoadVisualElement("ModSettings/StringModSettingElement");
-
-        // Inline-Start: _modSettingDescriptorInitializer.Initialize(root.Q<VisualElement>("Descriptor"), stringModSetting);
-        var descriptor = root.Q<VisualElement>("Descriptor");
-        descriptor.Q<Label>("SettingLabel").text =
-                  modSetting.Descriptor.Name ?? _loc.T(modSetting.Descriptor.NameLocKey);
-        var tooltipElement = descriptor.Q<VisualElement>("SettingTooltip");
-        tooltipElement.ToggleDisplayStyle(false);
-        // Inline-End
+        _modSettingDescriptorInitializer.Initialize(root.Q<VisualElement>("Descriptor"),
+                                                    stringModSetting);
 
         var textField = root.Q<TextField>();
         textField.value = stringModSetting.Value;

@@ -8,7 +8,7 @@ namespace Mods.WebUI.Scripts {
     public ModSetting<int> Port { get; } =
       new ModSetting<int>(8080, ModSettingDescriptor.CreateLocalized("WebUI.Port"));
 
-    public ModSetting<string> Status { get; } = new ReadOnlyModSetting<string>(
+    public ReadOnlyModSetting<string> Status { get; } = new ReadOnlyModSetting<string>(
       "", ModSettingDescriptor.CreateLocalized("WebUI.Status").SetEnableCondition(() => false));
 
     public ModSetting<bool> AllowPlayerLog { get; } =
@@ -19,6 +19,8 @@ namespace Mods.WebUI.Scripts {
                          ModRepository modRepository) : base(
       settings, modSettingsOwnerRegistry, modRepository) {
     }
+
+    public override ModSettingsContext ChangeableOn => ModSettingsContext.MainMenu | ModSettingsContext.Game;
 
     protected override string ModId => "WebUI";
 

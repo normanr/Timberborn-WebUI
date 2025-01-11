@@ -1,5 +1,6 @@
 bin/
 obj/
+Harmony
 Timberborn
 ModSettings
 *.csproj.user

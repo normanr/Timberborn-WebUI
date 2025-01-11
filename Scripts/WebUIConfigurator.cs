@@ -7,6 +7,9 @@ namespace Mods.WebUI.Scripts {
   internal class WebUIConfiguratorCommon : IConfigurator {
     public virtual void Configure(IContainerDefinition containerDefinition) {
       containerDefinition.Bind<MainThread>().AsSingleton();
+      containerDefinition.MultiBind<IModSettingElementFactory>()
+          .To<ReadOnlyStringModSettingElementFactory>()
+          .AsSingleton();
       containerDefinition.Bind<WebUISettings>().AsSingleton();
       containerDefinition.Bind<WebUIServer>().AsSingleton();
       containerDefinition.Bind<TextureHandler>().AsSingleton();
@@ -26,9 +29,6 @@ namespace Mods.WebUI.Scripts {
   [Context("MainMenu")]
   internal class WebUIConfiguratorForMainMenu : IConfigurator {
     public virtual void Configure(IContainerDefinition containerDefinition) {
-      containerDefinition.MultiBind<IModSettingElementFactory>()
-          .To<ReadOnlyStringModSettingElementFactory>()
-          .AsSingleton();
       containerDefinition.Bind<IndexMenuHandler>().AsSingleton();
     }
   }
