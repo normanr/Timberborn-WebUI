@@ -99,7 +99,7 @@ namespace Mods.WebUI.Scripts
       }
       return new IconTooltip {
         Icon = TextureUrl(building.GetComponentFast<LabeledEntity>().GetLabeledEntitySpec().ImagePath),
-        Tooltip = _loc.T(presentLocKey, _loc.T(building.GetComponentFast<Building>().DisplayNameLocKey)),
+        Tooltip = _loc.T(presentLocKey, _loc.T(building.GetComponentFast<LabeledEntitySpec>().DisplayNameLocKey)),
       };
     }
 
