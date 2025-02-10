@@ -132,11 +132,13 @@ namespace Mods.WebUI.Scripts
         .Where(o => o.Character)
         .Select(o => new {
           o.EntityComponent,
+          o.EntityComponent.GetComponentFast<SortableEntity>()?.SortableName,
           o.Character,
           Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
           Dweller = o.EntityComponent.GetComponentFast<Dweller>(),
           Worker = o.EntityComponent.GetComponentFast<Worker>(),
         })
+        .OrderBy(o => o.SortableName)
         .GroupBy(o => o.Group, o => new {
           Avatar = TextureUrl(GetEntityAvatarPath(o.Character)),
           Name = o.Character.FirstName,
@@ -148,7 +150,7 @@ namespace Mods.WebUI.Scripts
         .OrderBy(o => CharacterBatchControlTab.GetSortingKey(o.Key))
         .Select(g => new {
           Header = _loc.T(g.Key),
-          Rows = g.OrderBy(o => o.Name),
+          Rows = g,
         });
     }
 
