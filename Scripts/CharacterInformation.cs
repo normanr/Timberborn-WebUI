@@ -7,7 +7,6 @@ using UnityEngine;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BeaversUI;
 using Timberborn.BotsUI;
-using Timberborn.Buildings;
 using Timberborn.Characters;
 using Timberborn.DwellingSystem;
 using Timberborn.GameFactionSystem;
@@ -16,6 +15,7 @@ using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
 using Timberborn.WorkSystem;
+using HarmonyLib;
 
 namespace Mods.WebUI.Scripts
 {
@@ -70,6 +70,10 @@ namespace Mods.WebUI.Scripts
         }
         if (entityBadge is BotEntityBadge) {
           return _factionService.Current.BotAvatar;
+        }
+        var t = Traverse.Create(entityBadge).Method("GetEntityAvatarPath");
+        if (t.MethodExists()) {
+          return t.GetValue<string>();
         }
       }
       return null;
