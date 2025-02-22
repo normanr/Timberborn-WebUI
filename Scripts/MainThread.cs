@@ -5,7 +5,7 @@ using Timberborn.SingletonSystem;
 using UnityEngine;
 
 namespace Mods.WebUI.Scripts {
-  internal class MainThread : IUpdatableSingleton {
+  public class MainThread : IUpdatableSingleton {
     private readonly ConcurrentQueue<Action> _queue = new ConcurrentQueue<Action>();
 
     public void UpdateSingleton() {
@@ -16,12 +16,25 @@ namespace Mods.WebUI.Scripts {
       }
     }
 
-    public async Task<T> Invoke<T>(Func<T> fn) {
-      var acs = new AwaitableCompletionSource<T>();
+    public T Invoke<T>(Func<T> fn) {
+      return InvokeAsync(fn).Result;
+    }
+
+    public async Task<T> InvokeAsync<T>(Func<T> fn) {
+      var acs = new AwaitableCompletionSource<Tuple<T, Exception>>();
       _queue.Enqueue(() => {
-        acs.SetResult(fn());
+        try {
+          acs.SetResult(new Tuple<T, Exception>(fn(), null));
+        }
+        catch (Exception e) {
+          acs.SetResult(new Tuple<T, Exception>(default, e));
+        }
       });
-      return await acs.Awaitable;
+      var result = await acs.Awaitable;
+      if (result.Item2 != null) {
+        throw new Exception("Error on MainThread", result.Item2);
+      }
+      return result.Item1;
     }
 
   }

@@ -49,7 +49,7 @@ namespace Mods.WebUI.Scripts {
         if (!_assetCache.TryGetValue(request.Url.PathAndQuery, out byte[] data)) {
           data = _mainThread.Invoke(() => {
             return GetAssetData(request.Url);
-          }).Result;
+          });
           _assetCache[request.Url.PathAndQuery] = data;
         }
         response.ContentType = MimeMapping.GetMimeMapping(Path.GetFileName(request.Url.AbsolutePath));

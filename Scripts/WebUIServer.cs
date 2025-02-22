@@ -50,7 +50,7 @@ namespace Mods.WebUI.Scripts {
         requestDelegate = requestContext => {
           return _mainThread.Invoke(() => {
             return originalDelegate(requestContext);
-          }).Result;
+          });
         };
       }
       _routes.Add(new Route(url.TrimStart('/'), defaults, constraints, new WebUIRouteHandler(requestDelegate)));

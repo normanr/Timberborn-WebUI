@@ -45,20 +45,11 @@ namespace Mods.WebUI.Scripts
 
     [OnMainThread]
     string HandleRequest(RequestContext requestContext) {
-      var httpContext = requestContext.HttpContext;
-      var response = httpContext.Response;
-      try {
-        var responseString = JsonConvert.SerializeObject(
-          GetJson(),
-          new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-        response.ContentType = "application/json";
-        return responseString;
-      } catch (Exception e) {
-        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Error: " + e);
-        response.StatusCode = 500;
-        response.ContentType = "text/plain; charset=utf-8";
-        return "Error: " + e + "\n";
-      }
+      var response = JsonConvert.SerializeObject(
+        GetJson(),
+        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+      requestContext.HttpContext.Response.ContentType = "application/json";
+      return response;
     }
 
     string GetEntityAvatarPath(Character subject) {
