@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Routing;
 using Newtonsoft.Json;
-using UnityEngine;
 using Timberborn.BaseComponentSystem;
-using Timberborn.BeaversUI;
-using Timberborn.BotsUI;
 using Timberborn.Characters;
 using Timberborn.DwellingSystem;
 using Timberborn.GameFactionSystem;
@@ -15,7 +10,6 @@ using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
 using Timberborn.WorkSystem;
-using HarmonyLib;
 
 namespace Mods.WebUI.Scripts
 {
@@ -52,24 +46,6 @@ namespace Mods.WebUI.Scripts
       return response;
     }
 
-    string GetEntityAvatarPath(Character subject) {
-      var _entityBadgesCache = new List<IEntityBadge>();
-      subject.GetComponentsFast(_entityBadgesCache);
-      foreach (var entityBadge in _entityBadgesCache) {
-        if (entityBadge is BeaverEntityBadge) {
-          return (entityBadge as BeaverEntityBadge).GetEntityAvatarPath();
-        }
-        if (entityBadge is BotEntityBadge) {
-          return _factionService.Current.BotAvatar;
-        }
-        var t = Traverse.Create(entityBadge).Method("GetEntityAvatarPath");
-        if (t.MethodExists()) {
-          return t.GetValue<string>();
-        }
-      }
-      return null;
-    }
-
     string TextureUrl(string path) {
       if (path == null) {
         return null;
@@ -93,17 +69,17 @@ namespace Mods.WebUI.Scripts
         };
       }
       return new IconTooltip {
-        Icon = TextureUrl(building.GetComponentFast<LabeledEntity>().GetLabeledEntitySpec().ImagePath),
+        Icon = TextureUrl(building.GetComponentFast<LabeledEntity>().Image.GetAssetLoaderPath()),
         Tooltip = _loc.T(presentLocKey, _loc.T(building.GetComponentFast<LabeledEntitySpec>().DisplayNameLocKey)),
       };
     }
 
     IconTooltip Relation(Dweller d) {
-      return BuildingData(d, d?.HasHome, d?.Home, "ui/images/game/homeless-nobg", "Beaver.Homeless", "Beaver.House");
+      return BuildingData(d, d?.HasHome, d?.Home, "UI/Images/Game/homeless-nobg", "Beaver.Homeless", "Beaver.House");
     }
 
     IconTooltip Relation(Worker w) {
-      return BuildingData(w, w?.Employed, w?.Workplace, "ui/images/game/jobless-nobg", "Beaver.Unemployed", "Beaver.Workplace");
+      return BuildingData(w, w?.Employed, w?.Workplace, "UI/Images/Game/jobless-nobg", "Beaver.Unemployed", "Beaver.Workplace");
     }
 
     public object GetJson()
@@ -126,17 +102,15 @@ namespace Mods.WebUI.Scripts
           o.EntityComponent.GetComponentFast<SortableEntity>()?.SortableName,
           o.Character,
           Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
-          Dweller = o.EntityComponent.GetComponentFast<Dweller>(),
-          Worker = o.EntityComponent.GetComponentFast<Worker>(),
         })
         .OrderBy(o => o.SortableName)
         .GroupBy(o => o.Group, o => new {
-          Avatar = TextureUrl(GetEntityAvatarPath(o.Character)),
+          Avatar = TextureUrl(_entityBadgeService.GetEntityAvatar(o.Character).GetAssetLoaderPath()),
           Name = o.Character.FirstName,
           o.Character.Age,
           o.Character.GetComponentFast<WellbeingTracker>().Wellbeing,
-          Home = Relation(o.Dweller),
-          Workplace = Relation(o.Worker),
+          Home = Relation(o.EntityComponent.GetComponentFast<Dweller>()),
+          Workplace = Relation(o.EntityComponent.GetComponentFast<Worker>()),
         })
         .OrderBy(o => CharacterBatchControlTab.GetSortingKey(o.Key))
         .Select(g => new {

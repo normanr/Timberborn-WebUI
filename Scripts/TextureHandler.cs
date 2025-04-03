@@ -23,14 +23,8 @@ namespace Mods.WebUI.Scripts {
       new System.Random().NextBytes(_urlSigningKey);
       _assetCache = new ConcurrentDictionary<string, byte[]>();
 
-      webUIServer.MapGet("/buildings/{*path_info}", HandleRequest, new RouteValueDictionary() {
-        { "prefix", "buildings/"},
-      });
-      webUIServer.MapGet("/sprites/{*path_info}", HandleRequest, new RouteValueDictionary() {
-        { "prefix", "sprites/"},
-      });
-      webUIServer.MapGet("/ui/images/{*path_info}", HandleRequest, new RouteValueDictionary() {
-        { "prefix", "ui/images/"},
+      webUIServer.MapGet("/{*path_info}", HandleRequest, constraints: new RouteValueDictionary() {
+        { "path_info", @".*\.(jpg|png)"}
       });
     }
 
