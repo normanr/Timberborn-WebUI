@@ -1,5 +1,7 @@
 bin/
+dlls/
 obj/
+zips/
 Harmony
 Timberborn
 ModSettings

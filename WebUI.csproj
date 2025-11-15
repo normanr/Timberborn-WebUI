@@ -42,8 +42,7 @@
       <Private>false</Private>
     </Reference>
     <Reference Include="System.Web">
-      <HintPath>Timberborn\Timberborn_Data\Managed\System.Web.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>dlls\System.Web.dll</HintPath>
     </Reference>
     <Reference Include="Bindito.Core">
       <HintPath>Timberborn\Timberborn_Data\Managed\Bindito.Core.dll</HintPath>
@@ -161,16 +160,8 @@
       <HintPath>Harmony/0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="ModSettings.CommonUI">
-      <HintPath>ModSettings\Scripts\ModSettings.CommonUI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
     <Reference Include="ModSettings.Core">
       <HintPath>ModSettings\Scripts\ModSettings.Core.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="ModSettings.CoreUI">
-      <HintPath>ModSettings\Scripts\ModSettings.CoreUI.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
@@ -185,8 +176,6 @@
     <Compile Include="Scripts\MainThread.cs" />
     <Compile Include="Scripts\OnMainThreadAttribute.cs" />
     <Compile Include="Scripts\PlayerLogHandler.cs" />
-    <Compile Include="Scripts\ReadOnlyModSetting.cs" />
-    <Compile Include="Scripts\ReadOnlyStringModSettingElementFactory.cs" />
     <Compile Include="Scripts\StaticAssetsHandler.cs" />
     <Compile Include="Scripts\TextureExtensions.cs" />
     <Compile Include="Scripts\TextureHandler.cs" />

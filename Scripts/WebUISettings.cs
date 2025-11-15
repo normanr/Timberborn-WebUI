@@ -8,7 +8,7 @@ namespace Mods.WebUI.Scripts {
     public ModSetting<int> Port { get; } =
       new ModSetting<int>(8080, ModSettingDescriptor.CreateLocalized("WebUI.Port"));
 
-    public ReadOnlyModSetting<string> Status { get; } = new ReadOnlyModSetting<string>(
+    public ModSetting<string> Status { get; } = new ModSetting<string>(
       "", ModSettingDescriptor.CreateLocalized("WebUI.Status").SetEnableCondition(() => false));
 
     public ModSetting<bool> AllowPlayerLog { get; } =
