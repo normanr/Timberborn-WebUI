@@ -69,8 +69,8 @@ namespace Mods.WebUI.Scripts
         };
       }
       return new IconTooltip {
-        Icon = TextureUrl(building.GetComponentFast<LabeledEntity>().Image.GetAssetLoaderPath()),
-        Tooltip = _loc.T(presentLocKey, _loc.T(building.GetComponentFast<LabeledEntitySpec>().DisplayNameLocKey)),
+        Icon = TextureUrl(building.GetComponent<LabeledEntitySpec>().Icon.Path),
+        Tooltip = _loc.T(presentLocKey, _loc.T(building.GetComponent<LabeledEntitySpec>().DisplayNameLocKey)),
       };
     }
 
@@ -94,23 +94,23 @@ namespace Mods.WebUI.Scripts
       return _entityRegistry.Entities
         .Select(entity => new {
           EntityComponent = entity,
-          Character = entity.GetComponentFast<Character>(),
+          Character = entity.GetComponent<Character>(),
         })
         .Where(o => o.Character)
         .Select(o => new {
           o.EntityComponent,
-          o.EntityComponent.GetComponentFast<SortableEntity>()?.SortableName,
+          o.EntityComponent.GetComponent<SortableEntity>()?.SortableName,
           o.Character,
           Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
         })
         .OrderBy(o => o.SortableName)
         .GroupBy(o => o.Group, o => new {
-          Avatar = TextureUrl(_entityBadgeService.GetEntityAvatar(o.Character).GetAssetLoaderPath()),
+          Avatar = TextureUrl(_entityBadgeService.GetEntityAvatar(o.Character).GetAssetRefPath()),
           Name = o.Character.FirstName,
           o.Character.Age,
-          o.Character.GetComponentFast<WellbeingTracker>().Wellbeing,
-          Home = Relation(o.EntityComponent.GetComponentFast<Dweller>()),
-          Workplace = Relation(o.EntityComponent.GetComponentFast<Worker>()),
+          o.Character.GetComponent<WellbeingTracker>().Wellbeing,
+          Home = Relation(o.EntityComponent.GetComponent<Dweller>()),
+          Workplace = Relation(o.EntityComponent.GetComponent<Worker>()),
         })
         .OrderBy(o => CharacterBatchControlTab.GetSortingKey(o.Key))
         .Select(g => new {
