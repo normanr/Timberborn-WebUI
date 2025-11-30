@@ -20,9 +20,13 @@ namespace Mods.WebUI.Scripts {
       });
     }
 
-    public static string GetAssetRefPath(this UnityEngine.Object asset) {
-      _assetPaths.TryGetValue(asset, out string result);
-      return result;
+    extension(UnityEngine.Object asset) {
+      public string AssetRefPath {
+        get {
+          _assetPaths.TryGetValue(asset, out string result);
+          return result;
+        }
+      }
     }
   }
 }

@@ -15,11 +15,11 @@ namespace Mods.WebUI.Scripts {
     }
 
     internal static string GetGroupingKey(EntityComponent entityComponent) {
-      return (string)_getGroupingKey.Invoke(null, new object[] { entityComponent });
+      return (string)_getGroupingKey.Invoke(null, [entityComponent]);
     }
 
     internal static string GetSortingKey(string locKey) {
-      return (string)_getSortingKey.Invoke(null, new object[] { locKey });
+      return (string)_getSortingKey.Invoke(null, [locKey]);
     }
   }
 }

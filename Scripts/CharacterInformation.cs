@@ -105,7 +105,7 @@ namespace Mods.WebUI.Scripts
         })
         .OrderBy(o => o.SortableName)
         .GroupBy(o => o.Group, o => new {
-          Avatar = TextureUrl(_entityBadgeService.GetEntityAvatar(o.Character).GetAssetRefPath()),
+          Avatar = TextureUrl(_entityBadgeService.GetEntityAvatar(o.Character).AssetRefPath),
           Name = o.Character.FirstName,
           o.Character.Age,
           o.Character.GetComponent<WellbeingTracker>().Wellbeing,
