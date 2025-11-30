@@ -10,13 +10,14 @@ body {
 table {
   border-spacing: 2px 4px;
 }
-th {
-  text-align: center;
+td.main {
+  vertical-align: top;
 }
-tr.row {
+/* characters */
+table.characters tr.row {
   outline: #af9866 1px solid;
 }
-td {
+table.characters td {
   padding: 1px 5px;
   background-color: #22362a;
   outline: 2.5px solid #152722;
@@ -42,4 +43,41 @@ img {
 }
 .wellbeing--negative {
   background-color: #7e100e;
+}
+/* goods */
+td.goodgroup {
+  vertical-align: top;
+}
+.goodgroup table {
+  border-collapse: collapse;
+  width: 84px;
+}
+.goodgroup tr:has(th) {
+  border: 2px solid #af9866;
+}
+.goodgroup th:first-child {
+  text-align: left;
+}
+.goodgroup th, .goodgroup td {
+  padding: 0 4px;
+}
+.goodgroup td {
+  background-color: rgba(48, 35, 55, 0.7);
+}
+.stockpile-capacity{
+  width: 6px;
+}
+.stockpile-capacity__progress-bar {
+  width: 6px;
+  height: 16px;
+  align-content: flex-end;
+  background-color: rgba(157, 135, 89, 0.2);
+}
+.stockpile-capacity__progress-bar-progress {
+  background-color: rgb(157, 135, 89);
+  width: 6px;
+}
+.stock {
+  text-align: right;
+  padding: 1px 5px;
 }

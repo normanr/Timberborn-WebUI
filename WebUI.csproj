@@ -125,8 +125,16 @@
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.GameFactionSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Timberborn.Goods">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Goods.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Timberborn.Localization">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Localization.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Timberborn.LocalizationSerialization">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.LocalizationSerialization.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Timberborn.Modding">
@@ -135,6 +143,10 @@
     </Reference>
     <Reference Include="Timberborn.ModManagerScene">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.ModManagerScene.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Timberborn.ResourceCountingSystem">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.ResourceCountingSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Timberborn.SettingsSystem">

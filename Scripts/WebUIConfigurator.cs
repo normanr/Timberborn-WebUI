@@ -19,6 +19,7 @@ namespace Mods.WebUI.Scripts {
     public virtual void Configure(IContainerDefinition containerDefinition) {
       containerDefinition.Bind<IndexGameHandler>().AsSingleton();
       containerDefinition.Bind<CharacterInformation>().AsSingleton();
+      containerDefinition.Bind<GoodsInformation>().AsSingleton();
     }
   }
 
