@@ -1,36 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EB9CD6E5-8734-4AE9-8FD5-420DE2862E12}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <RootNamespace>Mods.WebUI</RootNamespace>
-    <AssemblyName>WebUI</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>default</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <Deterministic>false</Deterministic>
     <DebugType>embedded</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <LangVersion>Latest</LangVersion>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Timberborn\**;dlls\**;Harmony\**;ModSettings\**;zips\**</DefaultItemExcludes>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <LangVersion>Latest</LangVersion>
-  </PropertyGroup>
+
   <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>Timberborn\Timberborn_Data\Managed\mscorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>Timberborn\Timberborn_Data\Managed\netstandard.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="System">
       <HintPath>Timberborn\Timberborn_Data\Managed\System.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>Timberborn\Timberborn_Data\Managed\System.Core.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable">
@@ -169,30 +166,7 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts\AssetRefPatch.cs" />
-    <Compile Include="Scripts\CharacterBatchControlTab.cs" />
-    <Compile Include="Scripts\CharacterInformation.cs" />
-    <Compile Include="Scripts\CryptographicOperations.cs" />
-    <Compile Include="Scripts\IndexGameHandler.cs" />
-    <Compile Include="Scripts\IndexMenuHandler.cs" />
-    <Compile Include="Scripts\MainThread.cs" />
-    <Compile Include="Scripts\OnMainThreadAttribute.cs" />
-    <Compile Include="Scripts\PlayerLogHandler.cs" />
-    <Compile Include="Scripts\StaticAssetsHandler.cs" />
-    <Compile Include="Scripts\TextureExtensions.cs" />
-    <Compile Include="Scripts\TextureHandler.cs" />
-    <Compile Include="Scripts\WebUIConfigurator.cs" />
-    <Compile Include="Scripts\WebUIHttpHandler.cs" />
-    <Compile Include="Scripts\WebUIRequestDelegate.cs" />
-    <Compile Include="Scripts\WebUIRouteHandler.cs" />
-    <Compile Include="Scripts\WebUIServer.cs" />
-    <Compile Include="Scripts\WebUISettings.cs" />
-    <Compile Include="Scripts\WebUIStarter.cs" />
-    <Compile Include="Scripts\WebUIWorkerRequest.cs" />
-    <Compile Include="Scripts\SocketPatch.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Scripts\" />
     <Folder Include="Assets\" />
@@ -225,5 +199,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
 </Project>

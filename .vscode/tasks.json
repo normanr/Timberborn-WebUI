@@ -3,19 +3,13 @@
     "tasks": [
         {
             "label": "build",
-            "command": "dotnet",
-            "type": "process",
+            "type": "dotnet",
+            "task": "build",
             "presentation": {
                 "showReuseMessage": false,
                 "clear": true
             },
-            "args": [
-                "build",
-                "${workspaceFolder}/WebUI.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign"
-            ],
-            "problemMatcher": "$msCompile",
+            "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
