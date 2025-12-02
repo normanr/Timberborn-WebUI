@@ -40,8 +40,8 @@
               <td class="goodgroup">
                 <table>
                   <tbody>
-                    <tr data-bind="using: Group">
-                      <th><img width=18 height=18 data-bind="attr: { src: Icon, title: Name }"></th>
+                    <tr data-bind="using: Group, attr: { title: Group.Name }">
+                      <th><img width=18 height=18 data-bind="attr: { src: Icon }"></th>
                       <!-- ko ifnot: $data.SingleResourceGroup -->
                       <th class=stock colspan=2 data-bind="text: TotalStock"></th>
                       <!-- /ko -->
@@ -56,8 +56,8 @@
                     </tr>
                     <!-- /ko -->
                     <!-- ko foreach: $data.Rows -->
-                    <tr>
-                      <td><img width=18 height=18 data-bind="attr: { src: Icon, title: Name }"></td>
+                    <tr data-bind="attr: { title: Name }">
+                      <td><img width=18 height=18 data-bind="attr: { src: Icon }"></td>
                       <td class=stock data-bind="text: TotalStock"></td>
                       <td class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: FillRate * 100 + '%' }"></div></div></td>
                     </tr>
