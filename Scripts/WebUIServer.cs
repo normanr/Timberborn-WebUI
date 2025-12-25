@@ -18,6 +18,7 @@ namespace Mods.WebUI.Scripts {
 
     internal static string RootPath;
     private HttpListener _listener;
+    private string _status;
 
     internal WebUIServer(ModRepository modRepository, MainThread mainThread, WebUISettings webUISettings) {
       _modRepository = modRepository;
@@ -30,10 +31,14 @@ namespace Mods.WebUI.Scripts {
       AppDomain.CurrentDomain.SetData(".appVPath", "/");
       AppDomain.CurrentDomain.SetData(".appPath", RootPath);
 
-      _webUISettings.Port.ValueChanged += (sender, e) => {
-        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Port Changed to {_webUISettings.Port.Value}");
+      _webUISettings.Port.ValueChanged += (_, value) => {
+        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Port Changed to {value}");
         StopServer();
         StartServer();
+      };
+      _webUISettings.Status.ValueChanged += (_, value) => {
+        if (value == _status) return;
+        _webUISettings.Status.SetValue(_status);
       };
       StartServer();
     }
@@ -41,6 +46,11 @@ namespace Mods.WebUI.Scripts {
     public void Unload() {
       Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Unload()");
       StopServer();
+    }
+
+    private void SetStatus(string status) {
+      _status = status;
+      _webUISettings.Status.SetValue(status);
     }
 
     public void Map(string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
@@ -71,7 +81,7 @@ namespace Mods.WebUI.Scripts {
         var listener = new HttpListener();
         listener.Prefixes.Add("http://*:" + _webUISettings.Port.Value + "/");
         listener.Start();
-        _webUISettings.Status.SetValue("Listening on port " + _webUISettings.Port.Value);
+        SetStatus("Listening on port " + _webUISettings.Port.Value);
         _listener = listener;
         Task.Run(() => {
           while (true) {
@@ -80,7 +90,7 @@ namespace Mods.WebUI.Scripts {
           }
         });
       } catch (Exception ex) {
-        _webUISettings.Status.SetValue("Failed: " + ex.Message);
+        SetStatus("Failed: " + ex.Message);
         Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StartServer failed: " + ex);
       }
     }
@@ -93,7 +103,7 @@ namespace Mods.WebUI.Scripts {
           return;
         }
         listener.Stop();
-        _webUISettings.Status.SetValue("Stopped");
+        SetStatus("Stopped");
       } catch (Exception e) {
         Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StopServer failed: " + e);
       }
