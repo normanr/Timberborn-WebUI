@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 using HarmonyLib;
 using Timberborn.BlueprintSystem;
 
@@ -7,7 +8,7 @@ namespace Mods.WebUI.Scripts {
   [HarmonyPatch(typeof(AssetRef<UnityEngine.Object>))]
   public static class AssetRefPatch {
 
-    private static ConditionalWeakTable<UnityEngine.Object, string> _assetPaths = new ConditionalWeakTable<UnityEngine.Object, string>();
+    private static readonly ConditionalWeakTable<UnityEngine.Object, string> _assetPaths = [];
 
     [HarmonyPatch(MethodType.Constructor)]
     [HarmonyPatch([typeof(string), typeof(Lazy<UnityEngine.Object>)])]
@@ -15,7 +16,9 @@ namespace Mods.WebUI.Scripts {
       var lazyAsset = ____lazyAsset;
       ____lazyAsset = new Lazy<UnityEngine.Object>(() => {
         var value = lazyAsset.Value;
-        _assetPaths.GetValue(value, (_) => path);
+        if (_assetPaths.GetValue(value, (_) => path) == null) {
+          _assetPaths.AddOrUpdate(value, path);
+        }
         return value;
       });
     }
@@ -23,7 +26,10 @@ namespace Mods.WebUI.Scripts {
     extension(UnityEngine.Object asset) {
       public string AssetRefPath {
         get {
-          _assetPaths.TryGetValue(asset, out string result);
+          if (!_assetPaths.TryGetValue(asset, out string result)) {
+            Debug.LogWarning(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Missing AssetRef for {asset.name}");
+            _assetPaths.GetValue(asset, (_) => null);
+          }
           return result;
         }
       }

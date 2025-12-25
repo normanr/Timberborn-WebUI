@@ -13,19 +13,19 @@
         <td class="main">
             <h3>Population</h3>
             <table class="characters">
-              <!-- ko foreach: characters -->
+              <!-- ko foreach: $data.characters -->
               <tbody>
                 <tr>
-                  <th colspan=6 data-bind="text: Header + ' (' + Rows.length + ')'"></th>
+                  <th colspan=6 data-bind="text: $data.Header + ' (' + $data.Rows.length + ')'"></th>
                 </tr>
-                <!-- ko foreach: Rows -->
+                <!-- ko foreach: $data.Rows -->
                 <tr class="row">
-                  <td><img width=26 height=26 data-bind="attr: { src: Avatar }"></td>
-                  <td data-bind="text: Name"></td>
-                  <td class=age data-bind="text: Age"><div></div></td>
-                  <td><!-- ko if: $data.Home --><img width=26 height=26 data-bind="attr: { src: Home.Icon, title: Home.Tooltip }"><!-- /ko --></td>
-                  <td><!-- ko if: $data.Workplace --><img width=26 height=26 data-bind="attr: { src: Workplace.Icon, title: Workplace.Tooltip }"><!-- /ko --></td>
-                  <td><div class=wellbeing data-bind="text: Wellbeing, class: Wellbeing &lt; 0 ? 'wellbeing--negative' : 'wellbeing--positive'"></div></td>
+                  <td><img width=26 height=26 data-bind="attr: { src: $data.Avatar }"></td>
+                  <td data-bind="text: $data.Name"></td>
+                  <td class=age data-bind="text: $data.Age"><div></div></td>
+                  <td><!-- ko if: $data.Home --><img width=26 height=26 data-bind="attr: { src: $data.Home.Icon, title: $data.Home.Tooltip }"><!-- /ko --></td>
+                  <td><!-- ko if: $data.Workplace --><img width=26 height=26 data-bind="attr: { src: $data.Workplace.Icon, title: $data.Workplace.Tooltip }"><!-- /ko --></td>
+                  <td><div class=wellbeing data-bind="text: $data.Wellbeing, class: $data.Wellbeing &lt; 0 ? 'wellbeing--negative' : 'wellbeing--positive'"></div></td>
                 </tr>
                 <!-- /ko -->
               </tbody>
@@ -36,30 +36,30 @@
           <h3>Goods</h3>
           <table>
             <tr>
-              <!-- ko foreach: goods -->
+              <!-- ko foreach: $data.goods -->
               <td class="goodgroup">
                 <table>
                   <tbody>
-                    <tr data-bind="using: Group, attr: { title: Group.Name }">
-                      <th><img width=18 height=18 data-bind="attr: { src: Icon }"></th>
+                    <tr data-bind="using: $data.Group, attr: { title: $data.Group.Name }">
+                      <th><img width=18 height=18 data-bind="attr: { src: $data.Icon }"></th>
                       <!-- ko ifnot: $data.SingleResourceGroup -->
-                      <th class=stock colspan=2 data-bind="text: TotalStock"></th>
+                      <th class=stock colspan=2 data-bind="text: $data.TotalStock"></th>
                       <!-- /ko -->
                       <!-- ko if: $data.SingleResourceGroup -->
-                      <th class=stock data-bind="text: TotalStock"></th>
-                      <th class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: FillRate * 100 + '%' }"></div></div></th>
+                      <th class=stock data-bind="text: $data.TotalStock"></th>
+                      <th class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: $data.FillRate * 100 + '%' }"></div></div></th>
                       <!-- /ko -->
                     </tr>
-                    <!-- ko if: Group.Placeholder -->
+                    <!-- ko if: $data.Group.Placeholder -->
                     <tr>
-                      <td colspan=3 data-bind="text: Group.Placeholder"></td>
+                      <td colspan=3 data-bind="text: $data.Group.Placeholder"></td>
                     </tr>
                     <!-- /ko -->
                     <!-- ko foreach: $data.Rows -->
-                    <tr data-bind="attr: { title: Name }">
-                      <td><img width=18 height=18 data-bind="attr: { src: Icon }"></td>
-                      <td class=stock data-bind="text: TotalStock"></td>
-                      <td class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: FillRate * 100 + '%' }"></div></div></td>
+                    <tr data-bind="attr: { title: $data.Name }">
+                      <td><img width=18 height=18 data-bind="attr: { src: $data.Icon }"></td>
+                      <td class=stock data-bind="text: $data.TotalStock"></td>
+                      <td class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: $data.FillRate * 100 + '%' }"></div></div></td>
                     </tr>
                     <!-- /ko -->
                   </tbody>
