@@ -27,7 +27,7 @@ namespace Mods.WebUI.Scripts {
     }
 
     public void Load() {
-      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Load(), Port = {_webUISettings.Port.Value}, RootPath = {RootPath}");
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Load(), Port = {_webUISettings.Port.Value}, RootPath = {UserDataSanitizer.Sanitize(RootPath)}");
       AppDomain.CurrentDomain.SetData(".appVPath", "/");
       AppDomain.CurrentDomain.SetData(".appPath", RootPath);
 
