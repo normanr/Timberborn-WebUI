@@ -1,8 +1,8 @@
 {
   "Name": "Web UI",
-  "Version": "0.2.2",
+  "Version": "0.2.3",
   "Id": "WebUI",
-  "MinimumGameVersion": "1.0.0.0",
+  "MinimumGameVersion": "1.0.10.0",
   "Description": "Web UI",
   "RequiredMods": [
     {

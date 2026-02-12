@@ -6,6 +6,7 @@ using Timberborn.Characters;
 using Timberborn.DwellingSystem;
 using Timberborn.GameFactionSystem;
 using Timberborn.Localization;
+using Timberborn.EntityNaming;
 using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
@@ -99,11 +100,11 @@ namespace Mods.WebUI.Scripts
         .Where(o => o.Character)
         .Select(o => new {
           o.EntityComponent,
-          o.EntityComponent.GetComponent<SortableEntity>()?.SortableName,
+          o.EntityComponent.GetComponent<NamedEntity>()?.SortingKey,
           o.Character,
           Group = CharacterBatchControlTab.GetGroupingKey(o.EntityComponent),
         })
-        .OrderBy(o => o.SortableName)
+        .OrderBy(o => o.SortingKey)
         .GroupBy(o => o.Group, o => new {
           Avatar = TextureUrl(_entityBadgeService.GetEntityAvatar(o.Character).AssetRefPath),
           Name = o.Character.FirstName,

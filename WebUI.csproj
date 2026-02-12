@@ -109,6 +109,10 @@
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.DwellingSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Timberborn.EntityNaming">
+      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.EntityNaming.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Timberborn.EntityPanelSystem">
       <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.EntityPanelSystem.dll</HintPath>
       <Private>false</Private>
