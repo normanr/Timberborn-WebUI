@@ -43,10 +43,10 @@
                     <tr data-bind="using: $data.Group, attr: { title: $data.Group.Name }">
                       <th><img width=18 height=18 data-bind="attr: { src: $data.Icon }"></th>
                       <!-- ko ifnot: $data.SingleResourceGroup -->
-                      <th class=stock colspan=2 data-bind="text: $data.TotalStock"></th>
+                      <th class=stock colspan=2 data-bind="text: $data.AvailableStock"></th>
                       <!-- /ko -->
                       <!-- ko if: $data.SingleResourceGroup -->
-                      <th class=stock data-bind="text: $data.TotalStock"></th>
+                      <th class=stock data-bind="text: $data.AvailableStock"></th>
                       <th class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: $data.FillRate * 100 + '%' }"></div></div></th>
                       <!-- /ko -->
                     </tr>
@@ -58,7 +58,7 @@
                     <!-- ko foreach: $data.Rows -->
                     <tr data-bind="attr: { title: $data.Name }">
                       <td><img width=18 height=18 data-bind="attr: { src: $data.Icon }"></td>
-                      <td class=stock data-bind="text: $data.TotalStock"></td>
+                      <td class=stock data-bind="text: $data.AvailableStock"></td>
                       <td class=stockpile-capacity><div class="stockpile-capacity__progress-bar"><div class="stockpile-capacity__progress-bar-progress" data-bind="style: { height: $data.FillRate * 100 + '%' }"></div></div></td>
                     </tr>
                     <!-- /ko -->

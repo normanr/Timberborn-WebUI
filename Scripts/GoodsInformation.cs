@@ -74,20 +74,21 @@ namespace Mods.WebUI.Scripts
         .GroupBy(g => g.GoodGroup.Id, o => new {
           Name = o.Good.PluralDisplayName.Value,
           Icon = TextureUrl(o.Good.Icon.Path),
-          o.Stock.TotalStock,
+          o.Stock.AllStock,
+          o.Stock.AvailableStock,
           o.Stock.FillRate,
         })
         .Select(g => new {
           Group = _goodGroupSpecs[g.Key],
           AllRows = g,
-          Rows = g.Where(r => r.TotalStock != 0),
+          Rows = g.Where(r => r.AllStock != 0),
         })
         .Select(g => new {
           Group = new {
             Name = g.Group.DisplayName.Value,
             Icon = TextureUrl(g.Group.Icon.Path),
             SingleResourceGroup = g.Group.SingleResourceGroup ? (bool?)true : null,
-            TotalStock = g.Rows.Sum(g => g.TotalStock),
+            AvailableStock = g.Rows.Sum(g => g.AvailableStock),
             FillRate = g.Group.SingleResourceGroup ? (float?)g.AllRows.Single().FillRate : null,
             Placeholder = !g.Group.SingleResourceGroup && g.Rows.Count() == 0 ? _loc.T("TopBar.Nothing") : null,
           },
