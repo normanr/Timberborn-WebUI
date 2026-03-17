@@ -9,108 +9,101 @@ using System.Web.Routing;
 using UnityEngine;
 using Timberborn.AssetSystem;
 
-namespace Mods.WebUI.Scripts {
-  internal class TextureHandler {
-    private readonly IAssetLoader _assetLoader;
-    private readonly byte[] _urlSigningKey;
-    private readonly ConcurrentDictionary<string, byte[]> _assetCache;
+namespace Mods.WebUI.Scripts;
 
-    public TextureHandler(WebUIServer webUIServer, IAssetLoader assetLoader) {
-      _assetLoader = assetLoader;
+internal class TextureHandler {
+  private readonly IAssetLoader _assetLoader;
+  private readonly byte[] _urlSigningKey;
+  private readonly ConcurrentDictionary<string, byte[]> _assetCache;
 
-      _urlSigningKey = new byte[16];
-      new System.Random().NextBytes(_urlSigningKey);
-      _assetCache = new ConcurrentDictionary<string, byte[]>();
+  public TextureHandler(WebUIServer webUIServer, IAssetLoader assetLoader) {
+    _assetLoader = assetLoader;
 
-      webUIServer.MapGet("/{*path_info}", HandleRequest, constraints: new RouteValueDictionary() {
+    _urlSigningKey = new byte[16];
+    new System.Random().NextBytes(_urlSigningKey);
+    _assetCache = new ConcurrentDictionary<string, byte[]>();
+
+    webUIServer.MapGet("/{*path_info}", HandleRequest, constraints: new() {
         { "path_info", @".*\.(jpg|png)"}
       });
+  }
+
+  async Task<string> HandleRequest(RequestContext requestContext) {
+    var httpContext = requestContext.HttpContext;
+    var request = httpContext.Request;
+    var response = httpContext.Response;
+
+    if (!SignatureIsValid(request.Url)) {
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + request.Url);
+      response.StatusCode = 404;
+      return null;
     }
 
-    async Task<string> HandleRequest(RequestContext requestContext) {
-      var httpContext = requestContext.HttpContext;
-      var request = httpContext.Request;
-      var response = httpContext.Response;
-
-      if (!SignatureIsValid(request.Url)) {
-        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + request.Url);
-        response.StatusCode = 404;
-        return null;
+    try {
+      if (!_assetCache.TryGetValue(request.Url.PathAndQuery, out byte[] data)) {
+        await Awaitable.MainThreadAsync();
+        data = GetAssetData(request.Url);
+        _assetCache[request.Url.PathAndQuery] = data;
       }
-
-      try {
-        if (!_assetCache.TryGetValue(request.Url.PathAndQuery, out byte[] data)) {
-          await Awaitable.MainThreadAsync();
-          data = GetAssetData(request.Url);
-          _assetCache[request.Url.PathAndQuery] = data;
-        }
-        response.ContentType = MimeMapping.GetMimeMapping(Path.GetFileName(request.Url.AbsolutePath));
-        response.AppendHeader("Cache-Control", "max-age=3600, public");
-        response.AppendHeader("Content-Length", data.Length.ToString());
-        response.OutputStream.Write(data, 0, data.Length);
-        return null;
-      } catch (Exception ex) {
-        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 500 Server Error: " + request.Url);
-        Debug.LogError(ex);
-        response.StatusCode = 500;
-        return null;
-      }
+      response.ContentType = MimeMapping.GetMimeMapping(Path.GetFileName(request.Url.AbsolutePath));
+      response.AppendHeader("Cache-Control", "max-age=3600, public");
+      response.AppendHeader("Content-Length", data.Length.ToString());
+      response.OutputStream.Write(data, 0, data.Length);
+      return null;
     }
+    catch (Exception ex) {
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 500 Server Error: " + request.Url);
+      Debug.LogError(ex);
+      response.StatusCode = 500;
+      return null;
+    }
+  }
 
-    private byte[] GetAssetData(Uri url) {
-      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Caching " + url.PathAndQuery);
-      var ext = Path.GetExtension(url.AbsolutePath);
+  private byte[] GetAssetData(Uri url) {
+    Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Caching " + url.PathAndQuery);
+    var ext = Path.GetExtension(url.AbsolutePath);
+    var qs = HttpUtility.ParseQueryString(url.Query);
+    var texture = _assetLoader.Load<Texture2D>(url.AbsolutePath.TrimStart('/').Replace(ext, ""));
+    var w = int.Parse(qs.Get("w") ?? "0");
+    var h = int.Parse(qs.Get("h") ?? "0");
+    if (!texture.isReadable || w > 0 || h > 0) {
+      texture = texture.DuplicateAsReadable(w, h);
+    }
+    var data = ext.ToLower() switch {
+      ".png" => texture.EncodeToPNG(),
+      ".jpg" => texture.EncodeToJPG(),
+      _ => throw new InvalidDataException("Unsupported extension: " + ext),
+    };
+    return data;
+  }
+
+  public string SignUrl(string path) {
+    if (!path.StartsWith("/", StringComparison.Ordinal)) {
+      path = "/" + path;
+    }
+    using var hmac = new HMACSHA256(_urlSigningKey);
+    var sig = HttpServerUtility.UrlTokenEncode(
+          hmac.ComputeHash(Encoding.UTF8.GetBytes(path)));
+    path += (path.Contains("?") ? "&" : "?") + "sig=" + Uri.EscapeDataString(sig);
+    return path;
+  }
+
+  private bool SignatureIsValid(Uri url) {
+    try {
       var qs = HttpUtility.ParseQueryString(url.Query);
-      var texture = _assetLoader.Load<Texture2D>(url.AbsolutePath.TrimStart('/').Replace(ext, ""));
-      var w = int.Parse(qs.Get("w") ?? "0");
-      var h = int.Parse(qs.Get("h") ?? "0");
-      if (!texture.isReadable || w > 0 || h > 0) {
-        texture = texture.DuplicateAsReadable(w, h);
-      }
-      byte[] data;
-      switch (ext.ToLower()) {
-        case ".png":
-          data = texture.EncodeToPNG();
-          break;
-        case ".jpg":
-          data = texture.EncodeToJPG();
-          break;
-        default:
-          throw new InvalidDataException("Unsupported extension: " + ext);
-      }
-      return data;
+      var receivedSignature = HttpServerUtility.UrlTokenDecode(qs.Get("sig"));
+      var ub = new UriBuilder(url);
+      qs.Remove("sig");
+      ub.Query = qs.ToString();
+      var path = ub.Uri.PathAndQuery;
+
+      using var hmac = new HMACSHA256(_urlSigningKey);
+      var computedSignature = hmac.ComputeHash(Encoding.UTF8.GetBytes(path));
+      var signaturesMatch = CryptographicOperations.FixedTimeEquals(computedSignature, receivedSignature);
+      return signaturesMatch;
     }
-
-    public string SignUrl(string path) {
-      if (!path.StartsWith("/", StringComparison.Ordinal)) {
-        path = "/" + path;
-      }
-      using (var hmac = new HMACSHA256(_urlSigningKey)) {
-        var sig = HttpServerUtility.UrlTokenEncode(
-              hmac.ComputeHash(Encoding.UTF8.GetBytes(path)));
-        path += (path.Contains("?") ? "&" : "?") + "sig=" + Uri.EscapeDataString(sig);
-        return path;
-      }
-    }
-
-    private bool SignatureIsValid(Uri url) {
-      try {
-        var qs = HttpUtility.ParseQueryString(url.Query);
-        var receivedSignature = HttpServerUtility.UrlTokenDecode(qs.Get("sig"));
-        var ub = new UriBuilder(url);
-        qs.Remove("sig");
-        ub.Query = qs.ToString();
-        var path = ub.Uri.PathAndQuery;
-
-        using (var hmac = new HMACSHA256(_urlSigningKey)) {
-          var computedSignature = hmac.ComputeHash(Encoding.UTF8.GetBytes(path));
-          var signaturesMatch = CryptographicOperations.FixedTimeEquals(computedSignature, receivedSignature);
-          return signaturesMatch;
-        }
-      }
-      catch (Exception) {
-        return false;
-      }
+    catch (Exception) {
+      return false;
     }
   }
 }

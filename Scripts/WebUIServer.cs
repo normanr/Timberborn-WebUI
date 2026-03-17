@@ -7,129 +7,132 @@ using System.Web.Routing;
 using UnityEngine;
 using Timberborn.SingletonSystem;
 
-namespace Mods.WebUI.Scripts {
-  public class WebUIServer : ILoadableSingleton, IUnloadableSingleton {
+namespace Mods.WebUI.Scripts;
 
-    private readonly WebUISettings _webUISettings;
-    private readonly RouteCollection _routes = new RouteCollection();
+public class WebUIServer : ILoadableSingleton, IUnloadableSingleton {
 
-    internal static string RootPath;
-    private HttpListener _listener;
-    private string _status;
+  private readonly WebUISettings _webUISettings;
+  private readonly RouteCollection _routes = [];
 
-    internal WebUIServer(WebUISettings webUISettings) {
-      _webUISettings = webUISettings;
-    }
+  internal static string RootPath;
+  private HttpListener _listener;
+  private string _status;
 
-    public void Load() {
-      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Load(), Port = {_webUISettings.Port.Value}, RootPath = {UserDataSanitizer.Sanitize(RootPath)}");
-      AppDomain.CurrentDomain.SetData(".appVPath", "/");
-      AppDomain.CurrentDomain.SetData(".appPath", RootPath);
+  internal WebUIServer(WebUISettings webUISettings) {
+    _webUISettings = webUISettings;
+  }
 
-      _webUISettings.Port.ValueChanged += (_, value) => {
-        Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Port Changed to {value}");
-        StopServer();
-        StartServer();
-      };
-      _webUISettings.Status.ValueChanged += (_, value) => {
-        if (value == _status) return;
-        _webUISettings.Status.SetValue(_status);
-      };
-      StartServer();
-    }
+  public void Load() {
+    Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Load(), Port = {_webUISettings.Port.Value}, RootPath = {UserDataSanitizer.Sanitize(RootPath)}");
+    AppDomain.CurrentDomain.SetData(".appVPath", "/");
+    AppDomain.CurrentDomain.SetData(".appPath", RootPath);
 
-    public void Unload() {
-      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Unload()");
+    _webUISettings.Port.ValueChanged += (_, value) => {
+      Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + $"Web UI: Port Changed to {value}");
       StopServer();
-    }
+      StartServer();
+    };
+    _webUISettings.Status.ValueChanged += (_, value) => {
+      if (value == _status) return;
+      _webUISettings.Status.SetValue(_status);
+    };
+    StartServer();
+  }
 
-    private void SetStatus(string status) {
-      _status = status;
-      _webUISettings.Status.SetValue(status);
-    }
+  public void Unload() {
+    Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Unload()");
+    StopServer();
+  }
 
-    public void Map(string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
-      _routes.Add(new Route(url.TrimStart('/'), defaults, constraints, new WebUIRouteHandler(requestDelegate)));
-    }
+  private void SetStatus(string status) {
+    _status = status;
+    _webUISettings.Status.SetValue(status);
+  }
 
-    public void MapMethod(HttpMethod method, string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
-      if (constraints == null) constraints = new RouteValueDictionary();
-      constraints.Add("httpmethod", new HttpMethodConstraint(method.Method));
-      Map(url, requestDelegate, defaults, constraints);
-    }
+  public void Map(string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
+    _routes.Add(new Route(url.TrimStart('/'), defaults, constraints, new WebUIRouteHandler(requestDelegate)));
+  }
 
-    public void MapGet(string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
-      MapMethod(HttpMethod.Get, url, requestDelegate, defaults, constraints);
-    }
+  public void MapMethod(HttpMethod method, string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
+    constraints ??= [];
+    constraints.Add("httpmethod", new HttpMethodConstraint(method.Method));
+    Map(url, requestDelegate, defaults, constraints);
+  }
 
-    private void StartServer() {
-      try {
-        var listener = new HttpListener();
-        listener.Prefixes.Add("http://*:" + _webUISettings.Port.Value + "/");
-        listener.Start();
-        SetStatus("Listening on port " + _webUISettings.Port.Value);
-        _listener = listener;
-        Task.Run(() => {
-          while (true) {
-            HttpListenerContext context = _listener.GetContext();
-            Task.Run(() => HandleRequest(context));
-          }
-        });
-      } catch (Exception ex) {
-        SetStatus("Failed: " + ex.Message);
-        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StartServer failed: " + ex);
-      }
-    }
+  public void MapGet(string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
+    MapMethod(HttpMethod.Get, url, requestDelegate, defaults, constraints);
+  }
 
-    private void StopServer() {
-      try {
-        var listener = _listener;
-        _listener = null;
-        if (listener == null) {
-          return;
+  private void StartServer() {
+    try {
+      var listener = new HttpListener();
+      listener.Prefixes.Add("http://*:" + _webUISettings.Port.Value + "/");
+      listener.Start();
+      SetStatus("Listening on port " + _webUISettings.Port.Value);
+      _listener = listener;
+      Task.Run(() => {
+        while (true) {
+          HttpListenerContext context = _listener.GetContext();
+          Task.Run(() => HandleRequest(context));
         }
-        listener.Stop();
-        SetStatus("Stopped");
-      } catch (Exception e) {
-        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StopServer failed: " + e);
-      }
+      });
     }
+    catch (Exception ex) {
+      SetStatus("Failed: " + ex.Message);
+      Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StartServer failed: " + ex);
+    }
+  }
 
-    private void HandleRequest(HttpListenerContext context) {
-      var response = context.Response;
+  private void StopServer() {
+    try {
+      var listener = _listener;
+      if (listener == null) {
+        return;
+      }
+      _listener = null;
+      listener.Stop();
+      SetStatus("Stopped");
+    }
+    catch (Exception e) {
+      Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: StopServer failed: " + e);
+    }
+  }
+
+  private void HandleRequest(HttpListenerContext context) {
+    var response = context.Response;
+    try {
       try {
-        try {
-          var wr = new WebUIWorkerRequest(context.Request, response);
-          var httpContext = new HttpContext(wr);
-          var contextBase = new HttpContextWrapper(httpContext);
-          var routeData = _routes.GetRouteData(contextBase);
-          if (routeData == null) {
-            Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + httpContext.Request.Url);
-            response.StatusCode = 404;
-            response.ContentType = "text/plain; charset=utf-8";
-            var buffer = System.Text.Encoding.UTF8.GetBytes("Not Found\n");
-            response.ContentLength64 = buffer.Length;
-            // Get a response stream and write the response to it.
-            response.OutputStream.Write(buffer, 0, buffer.Length);
-          } else {
-            var ctx = new RequestContext(contextBase, routeData);
-            var handler = routeData.RouteHandler.GetHttpHandler(ctx);
-            handler.ProcessRequest(httpContext);
-            httpContext.Response.Flush();
-          }
-        } catch (Exception e) {
-          Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Error: " + e);
-          response.StatusCode = 500;
+        var wr = new WebUIWorkerRequest(context.Request, response);
+        var httpContext = new HttpContext(wr);
+        var contextBase = new HttpContextWrapper(httpContext);
+        var routeData = _routes.GetRouteData(contextBase);
+        if (routeData == null) {
+          Debug.Log(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: 404 Not Found: " + httpContext.Request.Url);
+          response.StatusCode = 404;
           response.ContentType = "text/plain; charset=utf-8";
-          var buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
+          var buffer = System.Text.Encoding.UTF8.GetBytes("Not Found\n");
           response.ContentLength64 = buffer.Length;
           // Get a response stream and write the response to it.
           response.OutputStream.Write(buffer, 0, buffer.Length);
+        } else {
+          var ctx = new RequestContext(contextBase, routeData);
+          var handler = routeData.RouteHandler.GetHttpHandler(ctx);
+          handler.ProcessRequest(httpContext);
+          httpContext.Response.Flush();
         }
       }
-      finally {
-        response.Close();
+      catch (Exception e) {
+        Debug.LogError(DateTime.Now.ToString("HH:mm:ss ") + "Web UI: Error: " + e);
+        response.StatusCode = 500;
+        response.ContentType = "text/plain; charset=utf-8";
+        var buffer = System.Text.Encoding.UTF8.GetBytes("Error: " + e + "\n");
+        response.ContentLength64 = buffer.Length;
+        // Get a response stream and write the response to it.
+        response.OutputStream.Write(buffer, 0, buffer.Length);
       }
+    }
+    finally {
+      response.Close();
     }
   }
 }
