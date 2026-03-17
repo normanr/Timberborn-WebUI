@@ -1,5 +1,6 @@
-﻿using System.Web.Routing;
+﻿using System.Threading.Tasks;
+using System.Web.Routing;
 
 namespace Mods.WebUI.Scripts {
-  public delegate string WebUIRequestDelegate(RequestContext requestContext);
+  public delegate Task<string> WebUIRequestDelegate(RequestContext requestContext);
 }

@@ -14,204 +14,63 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="mscorlib">
-      <HintPath>Timberborn\Timberborn_Data\Managed\mscorlib.dll</HintPath>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" />
+    <Reference Include="Timberborn\Timberborn_Data\Managed\mscorlib.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="netstandard">
-      <HintPath>Timberborn\Timberborn_Data\Managed\netstandard.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\netstandard.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="System">
-      <HintPath>Timberborn\Timberborn_Data\Managed\System.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\System.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="System.Core">
-      <HintPath>Timberborn\Timberborn_Data\Managed\System.Core.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\System.Core.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>Timberborn\Timberborn_Data\Managed\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\System.Collections.Immutable.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="System.Net.Http">
-      <HintPath>Timberborn\Timberborn_Data\Managed\System.Net.Http.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\System.Net.Http.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="System.Web">
-      <HintPath>dlls\System.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Bindito.Core">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Bindito.Core.dll</HintPath>
+    <Reference Include="dlls\System.Web.dll" />
+    <Reference Include="Timberborn\Timberborn_Data\Managed\Bindito.Core.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\Newtonsoft.Json.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>Timberborn\Timberborn_Data\Managed\UnityEngine.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\UnityEngine.*.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>Timberborn\Timberborn_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    <Reference Include="Timberborn\Timberborn_Data\Managed\Timberborn.*.dll" Publicize="true">
       <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>Timberborn\Timberborn_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    <Reference Include="Harmony/0Harmony.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>Timberborn\Timberborn_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.AssetSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.AssetSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.BaseComponentSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.BaseComponentSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.BatchControl">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.BatchControl.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.BeaverContaminationSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.BeaverContaminationSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.BlueprintSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.BlueprintSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Buildings">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Buildings.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Characters">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Characters.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.CharactersBatchControl">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.CharactersBatchControl.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Common">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Common.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.CoreUI">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.CoreUI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.DwellingSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.DwellingSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.EntityNaming">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.EntityNaming.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.EntityPanelSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.EntityPanelSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.EntitySystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.EntitySystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.FactionSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.FactionSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.GameFactionSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.GameFactionSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Goods">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Goods.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Localization">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Localization.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.LocalizationSerialization">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.LocalizationSerialization.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Modding">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Modding.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.ModManagerScene">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.ModManagerScene.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.ResourceCountingSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.ResourceCountingSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.SettingsSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.SettingsSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.SingletonSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.SingletonSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.TickSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.TickSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.Wellbeing">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.Wellbeing.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Timberborn.WorkSystem">
-      <HintPath>Timberborn\Timberborn_Data\Managed\Timberborn.WorkSystem.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Harmony">
-      <HintPath>Harmony/0Harmony.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="ModSettings.Core">
-      <HintPath>ModSettings\Scripts\ModSettings.Core.dll</HintPath>
+    <Reference Include="ModSettings\Scripts\ModSettings.Core.dll">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Scripts\" />
-    <Folder Include="Assets\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\favicon.ico">
+    <Content Include="Assets\*.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\index.html">
+    <Content Include="Assets\*.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\knockout-3.5.1.js">
+    <Content Include="Assets\*.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\script.js">
+    <Content Include="Assets\*.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\style.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\index-menu.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Localizations\enUS.csv">
+    <Content Include="Localizations\*.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

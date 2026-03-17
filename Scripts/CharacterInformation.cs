@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Web.Routing;
 using Newtonsoft.Json;
+using UnityEngine;
 using Timberborn.BaseComponentSystem;
 using Timberborn.Characters;
+using Timberborn.CharactersBatchControl;
 using Timberborn.DwellingSystem;
 using Timberborn.GameFactionSystem;
 using Timberborn.Localization;
@@ -11,6 +13,7 @@ using Timberborn.EntityPanelSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Wellbeing;
 using Timberborn.WorkSystem;
+using System.Threading.Tasks;
 
 namespace Mods.WebUI.Scripts
 {
@@ -38,8 +41,8 @@ namespace Mods.WebUI.Scripts
       webUIServer.MapGet("/characters", HandleRequest);
     }
 
-    [OnMainThread]
-    string HandleRequest(RequestContext requestContext) {
+    async Task<string> HandleRequest(RequestContext requestContext) {
+      await Awaitable.MainThreadAsync();
       var response = JsonConvert.SerializeObject(
         GetJson(),
         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });

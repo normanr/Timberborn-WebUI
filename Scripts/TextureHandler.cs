@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 using UnityEngine;
@@ -10,13 +11,11 @@ using Timberborn.AssetSystem;
 
 namespace Mods.WebUI.Scripts {
   internal class TextureHandler {
-    private readonly MainThread _mainThread;
     private readonly IAssetLoader _assetLoader;
     private readonly byte[] _urlSigningKey;
     private readonly ConcurrentDictionary<string, byte[]> _assetCache;
 
-    public TextureHandler(WebUIServer webUIServer, MainThread mainThread, IAssetLoader assetLoader) {
-      _mainThread = mainThread;
+    public TextureHandler(WebUIServer webUIServer, IAssetLoader assetLoader) {
       _assetLoader = assetLoader;
 
       _urlSigningKey = new byte[16];
@@ -28,7 +27,7 @@ namespace Mods.WebUI.Scripts {
       });
     }
 
-    public string HandleRequest(RequestContext requestContext) {
+    async Task<string> HandleRequest(RequestContext requestContext) {
       var httpContext = requestContext.HttpContext;
       var request = httpContext.Request;
       var response = httpContext.Response;
@@ -41,9 +40,8 @@ namespace Mods.WebUI.Scripts {
 
       try {
         if (!_assetCache.TryGetValue(request.Url.PathAndQuery, out byte[] data)) {
-          data = _mainThread.Invoke(() => {
-            return GetAssetData(request.Url);
-          });
+          await Awaitable.MainThreadAsync();
+          data = GetAssetData(request.Url);
           _assetCache[request.Url.PathAndQuery] = data;
         }
         response.ContentType = MimeMapping.GetMimeMapping(Path.GetFileName(request.Url.AbsolutePath));

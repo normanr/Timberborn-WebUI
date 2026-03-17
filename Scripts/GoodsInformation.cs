@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Routing;
 using Newtonsoft.Json;
+using UnityEngine;
 using Timberborn.BlueprintSystem;
-using Timberborn.Goods;
 using Timberborn.GameFactionSystem;
+using Timberborn.Goods;
 using Timberborn.Localization;
 using Timberborn.ResourceCountingSystem;
 using Timberborn.SingletonSystem;
@@ -47,8 +49,8 @@ namespace Mods.WebUI.Scripts
       _goodSpecs = [.. _specService.GetSpecs<GoodSpec>().OrderBy(g => (_goodGroupSpecs[g.GoodGroupId].Order, g.GoodOrder))];
     }
 
-    [OnMainThread]
-    string HandleRequest(RequestContext requestContext) {
+    async Task<string> HandleRequest(RequestContext requestContext) {
+      await Awaitable.MainThreadAsync();
       var response = JsonConvert.SerializeObject(
         GetJson(),
         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });

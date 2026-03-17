@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 
@@ -14,8 +15,13 @@ namespace Mods.WebUI.Scripts {
       _requestContext = requestContext;
     }
 
+    private async Task<string> ProcessRequestAsync() {
+      return await _requestDelegate(_requestContext);
+    }
+
     public void ProcessRequest(HttpContext context) {
-      var text = _requestDelegate(_requestContext);
+      // Run ProcessRequestAsync in this thread
+      var text = ProcessRequestAsync().GetAwaiter().GetResult();
       if (!string.IsNullOrEmpty(text)) {
         var buffer = Encoding.UTF8.GetBytes(text);
         // Get a response stream and write the response to it.

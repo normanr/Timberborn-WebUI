@@ -5,14 +5,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 using UnityEngine;
-using Timberborn.Modding;
 using Timberborn.SingletonSystem;
 
 namespace Mods.WebUI.Scripts {
   public class WebUIServer : ILoadableSingleton, IUnloadableSingleton {
 
-    private readonly ModRepository _modRepository;
-    private readonly MainThread _mainThread;
     private readonly WebUISettings _webUISettings;
     private readonly RouteCollection _routes = new RouteCollection();
 
@@ -20,9 +17,7 @@ namespace Mods.WebUI.Scripts {
     private HttpListener _listener;
     private string _status;
 
-    internal WebUIServer(ModRepository modRepository, MainThread mainThread, WebUISettings webUISettings) {
-      _modRepository = modRepository;
-      _mainThread = mainThread;
+    internal WebUIServer(WebUISettings webUISettings) {
       _webUISettings = webUISettings;
     }
 
@@ -54,15 +49,6 @@ namespace Mods.WebUI.Scripts {
     }
 
     public void Map(string url, WebUIRequestDelegate requestDelegate, RouteValueDictionary defaults = null, RouteValueDictionary constraints = null) {
-      // TODO: If would be nice to move this to _mainThread as MaybeInvokeDelegate.
-      if (Attribute.IsDefined(requestDelegate.Method, typeof(OnMainThreadAttribute))) {
-        var originalDelegate = requestDelegate;
-        requestDelegate = requestContext => {
-          return _mainThread.Invoke(() => {
-            return originalDelegate(requestContext);
-          });
-        };
-      }
       _routes.Add(new Route(url.TrimStart('/'), defaults, constraints, new WebUIRouteHandler(requestDelegate)));
     }
 

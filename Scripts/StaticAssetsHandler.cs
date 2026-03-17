@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Mods.WebUI.Scripts {
       });
     }
 
-    public string HandleRequest(RequestContext requestContext) {
+    public async Task<string> HandleRequest(RequestContext requestContext) {
       var virtualPath = "Assets/" + (string)requestContext.RouteData.Values["path_info"];
       var httpContext = requestContext.HttpContext;
       var request = httpContext.Request;
